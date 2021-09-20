@@ -7,3 +7,4 @@
 * Don't allow answers that contain words in the prompt
 * Allow close words?
 * Disambiugation pages in disambiguation results
+* Allow one player to 

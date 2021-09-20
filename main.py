@@ -9,7 +9,7 @@ def get_random_article():
   return article
 
 def get_random_word():
-  words = open('words.txt').readlines()
+  words = open('nounlist.txt').readlines()
   word = random.choice(words).strip()
   print(word)
   return word
