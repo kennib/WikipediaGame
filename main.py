@@ -3,14 +3,6 @@ import wikipedia
 import re
 import random
 
-#https://wikitech.wikimedia.org/wiki/Analytics/AQS/Pageviews
-#https://en.wikipedia.org/w/api.php?action=query&list=mostviewed
-#https://en.wikipedia.org/w/api.php?action=query&list=mostviewed&pvimoffset=5
-
-#https://en.wikipedia.org/w/api.php?action=help&modules=query
-
-#https://en.wikipedia.org/w/api.php?action=help&modules=query%2Bpageviews
-
 def choose_option(name, options):
   for i, option in enumerate(options):
     print(f'{i}) {option}')
@@ -25,6 +17,12 @@ def choose_random_article():
   print(article.title)
   print(article.summary[:250])
   return article
+
+def get_random_month():
+  year = random.randint(2016, 2021)
+  month = random.randint(1,12)
+  print(year, month)
+  return year, month
 
 def get_random_word():
   words = open('nounlist.txt').readlines()
@@ -41,12 +39,28 @@ def get_article(article_title):
     article = wikipedia.page(choice, auto_suggest=False)
   return article
 
+def get_pageviews(article, date):
+  year, month = date
+  if month == 12:
+    end_year, end_month = year+1, 1
+  else:
+    end_year, end_month = year, month+1
+  response = requests.get(f'https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/all-agents/{article}/monthly/{year}{month:02d}0100/{end_year}{end_month:02d}0100', headers={
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'
+  })
+  try:
+    views = response.json()['items'][0]['views']
+  except KeyError:
+    views = 0
+  return views
+  
+
 def guess_article_with_most_words(word):
   article_title = get_answer(f'Find the page with the most {word}: ', [word])
   article = get_article(article_title)
 
-  words =  re.sub('[^\w\d\s]', '', article.content).split()
-  matches = words.count(word)
+  words =  re.sub('[^\w\d\s]', '', article.content.lower()).split()
+  matches = words.count(word.lower())
 
   print(f'The {article.title} article has {matches} {word}s')
 
@@ -65,6 +79,17 @@ def guess_article_with_most_common_links(article):
   print(common_links)
 
   return len(common_links)
+
+def guess_article_with_most_views(date):
+  year, month = date
+  article_title = get_answer(f'Find the most popular article for {month}/{year}: ')
+  article = get_article(article_title)
+  
+  pageviews = get_pageviews(article.title.replace(' ', '_'), date)
+
+  print(f'The {article.title} article has {pageviews:,} pageviews')
+
+  return pageviews
 
 def get_answer(prompt, invalid_inputs=None):
   invalid_inputs = invalid_inputs or []
@@ -85,7 +110,11 @@ def context(word, article):
       return sentence
 
 def round(setup, ask):
-  context = setup()
+  if setup:
+    context = setup()
+  else:
+    context = None
+  
   player1 = ask(context)
   player2 = ask(context)
 
@@ -110,3 +139,6 @@ if __name__ == '__main__':
   print()
   print('Round 2')
   round(choose_random_article, guess_article_with_most_common_links)
+  print()
+  print('Round 3')
+  round(get_random_month, guess_article_with_most_views)
