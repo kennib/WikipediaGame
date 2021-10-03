@@ -1,0 +1,100 @@
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+
+<div id="app">
+  <h1>Pickapedia</h1>
+  <h2>{{ room }}</h2>
+  <div v-if="state == 'loading'">
+    Loading...
+  </div>
+  <div v-if="state == 'waiting room'">
+    <h2>Players</h2>
+    <ol>
+      <li v-for="player in players" v-text="player"></li>
+    </ol>
+    <button v-on:click="startGame">Start Game</button>
+  </div>
+  <div v-if="state == 'round'">
+    <h2>Round {{ round }}</h2>
+    <h3 v-text="question"></h3>
+    <input v-model="answer"></input>
+    <button v-on:click="submitAnswer">Submit answer</button>
+  </div>
+  <div v-if="state == 'round scores'">
+    <h2>Round {{ round }} - scores</h2>
+    <h3 v-text="question"></h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Answer</th>
+          <th>Article</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="result in results">
+          <td>{{ result.player }}</td>
+          <td>{{ result.answer }}</td>
+          <td>{{ result.article }}</td>
+          <td>{{ result.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button v-on:click="nextRound">Next Round</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+var socket = io()
+
+var app = new Vue({
+  el: '#app',
+  beforeCreate: function() {
+    vm = this
+    var url = new URL(window.location.href)
+    vm.room = url.searchParams.get('room')
+    vm.player = url.searchParams.get('name')
+
+    socket.on('connect', function() {
+      socket.emit('join', {
+        player: vm.player,
+        room: vm.room,
+      })
+    })
+    socket.on('new players', function(players) {
+      console.log(players)
+      vm.players = players
+    })
+    socket.on('update state', function(data) {
+      for (let key in data) {
+        vm[key] = data[key]
+      }
+    })
+  },
+  methods: {
+    startGame: function() {
+      socket.emit('request start', { room: this.room })
+    },
+    submitAnswer: function() {
+      socket.emit('send answer', { room: this.room, player: this.player, answer: this.answer })
+    },
+    nextRound: function() {
+      socket.emit('next round', { room: this.room })
+    }
+  },
+  data: {
+    players: [],
+    state: 'loading',
+    round: 0,
+    question: '',
+    answer: '',
+    results: {}
+  }
+})
+</script>
+
+
+<script type="text/javascript" charset="utf-8">
+</script>

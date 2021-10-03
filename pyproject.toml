@@ -8,6 +8,8 @@ authors = ["Your Name <you@example.com>"]
 python = "^3.8"
 wikipedia = "^1.4.0"
 Random-Word = "^1.0.7"
+Flask = "^2.0.1"
+Flask-SocketIO = "^5.1.1"
 
 [tool.poetry.dev-dependencies]
 

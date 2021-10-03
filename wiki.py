@@ -47,3 +47,9 @@ def get_pageviews(article, date):
   except KeyError:
     views = 0
   return views
+
+def get_article_wordcount(article_title, word):
+  article = get_article(article_title)
+  words = re.sub('[^\w\d\s]', '', article.content.lower()).split()
+  matches = words.count(word.lower())
+  return article.title, matches

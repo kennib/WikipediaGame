@@ -11,3 +11,14 @@
 * Disambiguation pages in disambiguation results cause errors
 * Allow one player to choose prompt from given set
 * Ask again if no search results
+
+* Make questions work
+  * handle multiple rounds
+  * handle disambiguation
+  * clear input
+  * have UI feedback for submission
+    * number of people who need to submit
+    * disable input
+  * show question on results page
+* Add loading screen
+* Total scores

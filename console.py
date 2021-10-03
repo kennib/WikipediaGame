@@ -25,10 +25,9 @@ def choose_article(article_title):
 
 def guess_article_with_most_words(word):
   article_title = get_answer(f'Find the page with the most {word}: ', [word])
-  article = wiki.get_article(article_title)
 
-  words = re.sub('[^\w\d\s]', '', article.content.lower()).split()
-  matches = words.count(word.lower())
+  _, matches = wiki.get_article_wordcount(article_title, word)
+  article = wiki.get_article(article_title)
 
   print(f'The {article.title} article has {matches} {word}s')
 
