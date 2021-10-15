@@ -75,7 +75,7 @@ class Room():
     return sorted(results, key=lambda result: result.get('score', 0), reverse=True)
 
   def current_state(self, player=None):
-    current_state = { 'state': self.state }
+    current_state = { 'state': self.state, 'players': list(self.players) }
 
     if self.state == 'round setup':
       current_state['playerChoice'] = self.player_choice

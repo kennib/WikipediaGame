@@ -67,7 +67,11 @@ def send_answer(data):
 @socketio.on('play again')
 def play_again(data):
   room_code = data['room']
+  players = rooms[room_code].players
   rooms[room_code] = room = Room(room_code)
+  
+  for player in players:
+    room.add_player(player)
 
   emit('update state', room.current_state(), json=True, broadcast=True)
 
