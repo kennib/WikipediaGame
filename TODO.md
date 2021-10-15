@@ -16,5 +16,3 @@
   * fix scoring
     * Make score between rounds more even
     * Score duplicate answers lower
-  * Change rules for most popular round
-    * Most popular page containing a particular word?

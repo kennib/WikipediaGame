@@ -31,11 +31,13 @@ class MostCommonLinksRound(Round):
 class MostViewsRound(Round):
   def __init__(self):
     self.year, self.month = wiki.get_random_month()
-    self.question = f'Find the most popular article for {self.month}/{self.year}'
+    self.word = wiki.get_random_word()
+    self.question = f'Find the most popular article for {self.month}/{self.year} which contains {self.word}'
 
   def score(self, answer):
     article = wiki.get_article(answer)
     views = wiki.get_pageviews(article.title.replace(' ', '_'), (self.year, self.month))
-    return article.title, views
+    score = views if self.word in article.content else 0
+    return article.title, score
 
 ROUNDS = [MostWordsRound, MostCommonLinksRound, MostViewsRound]
