@@ -8,11 +8,7 @@
   * Find the furthest article to another article https://api.sixdegreesofwikipedia.com/paths
   https://www.sixdegreesofwikipedia.com/
 * Count close words?
-* Allow one player to choose prompt from given set
 * Ask again if no search results
-
-* Make questions work
-  * add article selection for some rounds
 
 * Improvements
   * don't allow certain answers
