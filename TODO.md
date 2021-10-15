@@ -16,7 +16,6 @@
   * fix scoring
     * Make score between rounds more even
     * Score duplicate answers lower
-  * disallow double 'next round'
   * Make the last next round button say 'final scores'
   * Turn list of articles to select from into a series of buttons that can all be seen at once
   * Make great

@@ -35,19 +35,20 @@ def next_round(data):
   room_code = data['room']
   room = rooms[room_code]
   
-  room.next_round()
-  print('update state', room.current_state())
-  emit('update state', room.current_state(), json=True, broadcast=True)
-
-  print('round begin')
-
-  this_round = room.round
-  socketio.sleep(room.round_time)
-  print('round end')
-
-  if room.state == 'round' and room.round == this_round:
-    room.score_round()
+  if data['state'] == room.state and room.state == 'waiting room' or data['round'] == room.round_number:
+    room.next_round()
+    print('update state', room.current_state())
     emit('update state', room.current_state(), json=True, broadcast=True)
+
+    print('round begin')
+
+    this_round = room.round
+    socketio.sleep(room.round_time)
+    print('round end')
+
+    if room.state == 'round' and room.round == this_round:
+      room.score_round()
+      emit('update state', room.current_state(), json=True, broadcast=True)
 
 @socketio.on('send answer')
 def send_answer(data):

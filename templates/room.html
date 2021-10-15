@@ -143,7 +143,7 @@ var app = new Vue({
       socket.emit('send player choice', { room: this.room, choice: this.playerSelection })
     },
     nextRound: function() {
-      socket.emit('next round', { room: this.room })
+      socket.emit('next round', { room: this.room, state: this.state, round: this.round })
     },
     playAgain: function() {
       socket.emit('play again', { room: this.room })
