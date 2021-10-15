@@ -1,59 +1,12 @@
 from flask import Flask, render_template, request, send_from_directory
 from flask_socketio import SocketIO, emit
 import wiki
+from game import Room
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 
 rooms = {}
-
-class Room():
-  def __init__(self, room_code):
-    self.code = room_code
-    self.players = set()
-    self.state = 'waiting room'
-    self.question = None
-
-  def add_player(self, player):
-    self.players.add(player)
-
-  def next_round(self, question, word):
-    if self.state == 'waiting room':
-      self.round = 0
-
-    self.state = 'round'
-    self.word = word
-    self.question = question
-    self.results = {}
-    self.round += 1
-
-  def receive_answer(self, player, answer):
-    article_title, count = wiki.get_article_wordcount(answer, self.word)
-    self.results[player] = {
-      'player': player,
-      'answer': answer,
-      'article': article_title,
-      'score': count
-    }
-  
-  def round_complete(self):
-    return len(self.results) == len(self.players)
-
-  def score_round(self):
-    self.state = 'round scores'
-
-  def current_state(self):
-    current_state = { 'state': self.state }
-
-    if self.state == 'round':
-      current_state['round'] = self.round
-      current_state['question'] = self.question
-    elif self.state == 'round scores':
-      current_state['round'] = self.round
-      current_state['question'] = self.question
-      current_state['results'] = sorted(self.results.values(), key=lambda result: result['score'], reverse=True)
-
-    return current_state
 
 @app.route('/')
 def home():
@@ -69,38 +22,61 @@ def room():
 
 @socketio.on('join')
 def join(data):
-  print(data)
   room_code = data['room']
   player = data['player']
   room = rooms.get(room_code, Room(room_code))
   rooms[room_code] = room
   room.add_player(player)
   emit('new players', list(room.players), json=True, broadcast=True)
-  emit('update state', room.current_state(), json=True)
-
-@socketio.on('request start')
-def request_start(data):
-  room_code = data['room']
-  room = rooms[room_code]
-  word = wiki.get_random_word()
-  room.next_round(f'Which page has the most {word}?', word)
-  emit('update state', room.current_state(), json=True, broadcast=True)
+  emit('update state', room.current_state(player), json=True)
 
 @socketio.on('next round')
 def next_round(data):
   room_code = data['room']
   room = rooms[room_code]
-  word = wiki.get_random_word()
-  room.next_round(f'Which page has the most {word}?', word)
+  
+  room.next_round()
+  print('update state', room.current_state())
   emit('update state', room.current_state(), json=True, broadcast=True)
+
+  print('round begin')
+
+  this_round = room.round
+  socketio.sleep(room.round_time)
+  print('round end')
+
+  if room.state == 'round' and room.round == this_round:
+    room.score_round()
+    emit('update state', room.current_state(), json=True, broadcast=True)
 
 @socketio.on('send answer')
 def send_answer(data):
   room = rooms[data['room']]
-  room.receive_answer(data['player'], data['answer'])
+
+  try:
+    room.receive_answer(data['player'], data['answer'])
+    emit('update state', room.current_state(data['player']), json=True)
+    emit('update state', {'waitingFor': room.waiting_for_players()}, json=True, broadcast=True)
+  except wiki.DisambiguationError as e:
+    emit('disambiguation', {'word': data['answer'], 'options': e.options})
+  
   if room.round_complete():
     room.score_round()
     emit('update state', room.current_state(), json=True, broadcast=True)
+
+@socketio.on('play again')
+def play_again(data):
+  room_code = data['room']
+  rooms[room_code] = room = Room(room_code)
+
+  emit('update state', room.current_state(), json=True, broadcast=True)
+
+@socketio.on('send player choice')
+def handle_player_choice(data):
+  room = rooms[data['room']]
+  article_title = data['choice']
+  room.setup_round(article_title)
+  emit('update state', room.current_state(), json=True, broadcast=True)
 
 if __name__ == '__main__':
   #console.game()

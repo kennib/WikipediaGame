@@ -1,6 +1,6 @@
 # TODO
 
-* Turn into a website
+
 * Fix pluralisation
 * Other kinds of rounds
   * Guess the page images are on
@@ -8,17 +8,17 @@
   * Find the furthest article to another article https://api.sixdegreesofwikipedia.com/paths
   https://www.sixdegreesofwikipedia.com/
 * Count close words?
-* Disambiguation pages in disambiguation results cause errors
 * Allow one player to choose prompt from given set
 * Ask again if no search results
 
 * Make questions work
-  * handle multiple rounds
-  * handle disambiguation
-  * clear input
-  * have UI feedback for submission
-    * number of people who need to submit
-    * disable input
-  * show question on results page
-* Add loading screen
-* Total scores
+  * add article selection for some rounds
+
+* Improvements
+  * don't allow certain answers
+  * Fix 'number of players left to answer' message
+  * fix scoring
+    * Make score between rounds more even
+    * Score duplicate answers lower
+  * Change rules for most popular round
+    * Most popular page containing a particular word?

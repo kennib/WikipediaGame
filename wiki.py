@@ -53,3 +53,9 @@ def get_article_wordcount(article_title, word):
   words = re.sub('[^\w\d\s]', '', article.content.lower()).split()
   matches = words.count(word.lower())
   return article.title, matches
+
+def get_common_links(article_title, guessed_article_title):
+  article = get_article(article_title)
+  guessed_article = get_article(guessed_article_title)
+  common_links = set(article.links) & set(guessed_article.links)
+  return guessed_article.title, len(common_links)
