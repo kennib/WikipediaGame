@@ -16,3 +16,6 @@
   * fix scoring
     * Make score between rounds more even
     * Score duplicate answers lower
+  * disallow double 'next round'
+  * Make the last next round button say 'final scores'
+  * Make great
