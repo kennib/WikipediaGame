@@ -31,7 +31,8 @@
   <div v-if="state == 'round'">
     <timer v-bind:count-down="roundTime"></timer>
     <h2>Round {{ round }}</h2>
-    <h3 v-text="question"></h3>
+    <h3 v-text="question.description"></h3>
+    <img v-if="question.data.image" v-bind:src="question.data.image" />
     <div v-if="disambiguation">
       Which {{ disambiguation.word }} did you mean?
       <select v-model="answer" v-on:change="submitAnswer">
@@ -54,7 +55,16 @@
   </div>
   <div v-if="state == 'round scores'">
     <h2>Round {{ round }} - scores</h2>
-    <h3 v-text="question"></h3>
+    <h3 v-text="question.description"></h3>
+    <img v-if="question.data.image" v-bind:src="question.data.image" />
+    <h4 v-if="question.data.answer.article">
+      Article: 
+      <span v-text="question.data.answer.article"></span>
+    </h4>
+    <h4 v-if="question.data.answer.articles">
+      Answer:
+      <span v-for="article in question.data.answer.articles">{{article}} </span>
+    </h4>
     <table>
       <thead>
         <tr>
@@ -128,8 +138,6 @@ var app = new Vue({
       for (let key in data) {
         vm[key] = data[key]
       }
-      console.log('playerChoice:')
-      console.log(vm.playerChoice)
     })
   },
   methods: {
@@ -154,7 +162,10 @@ var app = new Vue({
     state: 'loading',
     round: 0,
     roundTime: 0,
-    question: '',
+    question: {
+      description: '',
+      data: {},
+    },
     answer: '',
     waitingFor: [],
     disambiguation: null,

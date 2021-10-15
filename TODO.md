@@ -3,12 +3,19 @@
 
 * Fix pluralisation
 * Other kinds of rounds
-  * Guess the page images are on
   * Find the most popular page in a category
   * Find the furthest article to another article https://api.sixdegreesofwikipedia.com/paths
   https://www.sixdegreesofwikipedia.com/
 * Count close words?
 * Ask again if no search results
+
+* Images round
+  * choose better random articles
+    * ignore articles with no images
+  * choose images that aren't too popular?
+    * ignore things like the 'edit page pencil'
+  * include points for backlinks not just forward links from guessed article
+  * set max image size
 
 * Improvements
   * don't allow certain answers

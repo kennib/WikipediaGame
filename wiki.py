@@ -33,6 +33,24 @@ def get_random_articles():
   articles = [article['title'] for article in response.json()['query']['mostviewed']]
   return articles
 
+def get_random_image():
+  article_title = wikipedia.random()
+  article = get_article(article_title)
+  image = random.choice(article.images)
+  return image, article
+
+def get_linked_pages(image):
+  title = 'File:'+image.split('/')[-1]
+  response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'list':'imageusage', 'iutitle': title, 'iulimit': 500, 'format': 'json'})
+
+  try:
+    image_usages = response.json().get('query').get('imageusage')
+    linked_pages = [page.get('title') for page in image_usages]
+  except (KeyError, IndexError):
+    linked_pages = []
+
+  return linked_pages
+
 def get_pageviews(article, date):
   year, month = date
   if month == 12:

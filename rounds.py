@@ -3,6 +3,7 @@ import wiki
 class Round():
   def __init__(self):
     self.question = ''
+    self.data = {}
 
   def score(self, answer):
     raise Exception('Not implemented')
@@ -12,6 +13,7 @@ class MostWordsRound(Round):
   def __init__(self):
     self.word = wiki.get_random_word()
     self.question = f'Which page has the most {self.word}?'
+    self.data = {}
 
   def score(self, answer):
     return wiki.get_article_wordcount(answer, self.word)
@@ -20,6 +22,7 @@ class MostCommonLinksRound(Round):
   def __init__(self):
     self.article_title = ''
     self.question = ''
+    self.data = {}
 
   def setup(self, article_title):
     self.article_title = article_title
@@ -33,6 +36,7 @@ class MostViewsRound(Round):
     self.year, self.month = wiki.get_random_month()
     self.word = wiki.get_random_word()
     self.question = f'Find the most popular article for {self.month}/{self.year} which contains {self.word}'
+    self.data = {}
 
   def score(self, answer):
     article = wiki.get_article(answer)
@@ -40,4 +44,27 @@ class MostViewsRound(Round):
     score = views if self.word in article.content else 0
     return article.title, score
 
-ROUNDS = [MostWordsRound, MostCommonLinksRound, MostViewsRound]
+class ImageRound(Round):
+  def __init__(self):
+    self.image, self.article = wiki.get_random_image()
+    self.articles = wiki.get_linked_pages(self.image)
+    self.question = f'Find an article containing the following image'
+    self.data = {
+      'image': self.image,
+      'answer': {
+        'article': self.article.title,
+        'articles': self.articles,
+      }
+    }
+  
+  def score(self, answer):
+    article = wiki.get_article(answer)
+    if article.title in self.articles:
+      score = 1
+    elif set(article.links) & set(self.articles):
+      score = 0.5
+    else:
+      score = 0
+    return article.title, score
+
+ROUNDS = [MostWordsRound, MostCommonLinksRound, ImageRound, MostViewsRound]
