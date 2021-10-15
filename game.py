@@ -3,6 +3,8 @@ import random
 
 from rounds import ROUNDS
 
+POINTS_PER_ROUND = 1000
+
 class Room():
   def __init__(self, room_code, round_time=30):
     self.code = room_code
@@ -48,13 +50,13 @@ class Room():
       print(f'{article_title} {score}')
       
       self.results[player]['article'] = article_title
-      self.results[player]['score'] = score
+      self.results[player]['raw_score'] = score
     else:
       self.results[player]['article'] = None
-      self.results[player]['score'] = 0
+      self.results[player]['raw_score'] = 0
   
   def round_complete(self):
-    submissions = [result for result in self.results.values() if result.get('score') != None]
+    submissions = [result for result in self.results.values() if result.get('raw_score') != None]
     return len(submissions) == len(self.players)
 
   def waiting_for_players(self):
@@ -67,12 +69,19 @@ class Room():
     for player in self.players:
       if player not in self.results:
         self.receive_answer(player, None)
-      
-      self.final_results[player]['score'] += self.results[player]['score']
+
+    total_score = sum([self.results[player]['raw_score'] for player in self.results.keys()])
+
+    for player in self.players:
+      if total_score == 0:
+        self.results[player]['normalised_score'] = 0
+      else:
+        self.results[player]['normalised_score'] = round((self.results[player]['raw_score'] / total_score) * POINTS_PER_ROUND)
+      self.final_results[player]['score'] += self.results[player]['normalised_score']
 
   def round_results(self):
     results = [self.results[player] for player in self.players]
-    return sorted(results, key=lambda result: result.get('score', 0), reverse=True)
+    return sorted(results, key=lambda result: result.get('normalised_score', 0), reverse=True)
 
   def current_state(self, player=None):
     current_state = { 'state': self.state, 'players': list(self.players) }
@@ -83,7 +92,7 @@ class Room():
       current_state['roundTime'] = self.round_time
       current_state['round'] = self.round_number
       current_state['question'] = self.round.question
-      current_state['submitted'] = self.results.get(player, {}).get('score') != None
+      current_state['submitted'] = self.results.get(player, {}).get('raw_score') != None
       current_state['answer'] = None
       current_state['disambiguation'] = None
       current_state['waitingFor'] = self.waiting_for_players()
