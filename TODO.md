@@ -10,9 +10,6 @@
 * Ask again if no search results
 
 * Images round
-  * choose better random articles
-    * ignore articles with no images
-  * choose images that aren't too popular?
   * include points for backlinks not just forward links from guessed article
   * set max image size
 
