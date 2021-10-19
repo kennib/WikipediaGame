@@ -77,11 +77,10 @@ def get_pageviews(article, date):
     views = 0
   return views
 
-def get_article_wordcount(article_title, word):
-  article = get_article(article_title)
+def get_article_wordcount(article, word):
   words = re.sub('[^\w\d\s]', '', article.content.lower()).split()
   matches = words.count(word.lower())
-  return article.title, matches
+  return matches
 
 def get_common_links(article_title, guessed_article_title):
   article = get_article(article_title)
