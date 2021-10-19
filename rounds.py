@@ -46,11 +46,11 @@ class MostViewsRound(Round):
 
 class ImageRound(Round):
   def __init__(self):
-    self.image, self.article = wiki.get_random_image()
-    self.articles = wiki.get_linked_pages(self.image)
+    self.image, image_url, self.article = wiki.get_random_image()
+    self.articles = wiki.get_pages_containing_image(self.image)
     self.question = f'Find an article containing the following image'
     self.data = {
-      'image': self.image,
+      'image': image_url,
       'answer': {
         'article': self.article.title,
         'articles': self.articles,

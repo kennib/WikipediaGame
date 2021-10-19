@@ -13,7 +13,6 @@
   * choose better random articles
     * ignore articles with no images
   * choose images that aren't too popular?
-    * ignore things like the 'edit page pencil'
   * include points for backlinks not just forward links from guessed article
   * set max image size
 
