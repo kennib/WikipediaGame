@@ -9,9 +9,6 @@
 * Count close words?
 * Ask again if no search results
 
-* Images round
-  * include points for backlinks not just forward links from guessed article
-
 * Improvements
   * don't allow certain answers
   * Fix 'number of players left to answer' message

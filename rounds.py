@@ -62,6 +62,8 @@ class ImageRound(Round):
     if article.title in self.articles:
       score = 1
     elif set(article.links) & set(self.articles):
+      score = 0.75
+    elif article.title in self.article.links:
       score = 0.5
     else:
       score = 0
