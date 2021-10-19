@@ -11,7 +11,6 @@
 
 * Images round
   * include points for backlinks not just forward links from guessed article
-  * set max image size
 
 * Improvements
   * don't allow certain answers
