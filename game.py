@@ -91,14 +91,20 @@ class Room():
     elif self.state == 'round':
       current_state['roundTime'] = self.round_time
       current_state['round'] = self.round_number
-      current_state['question'] = self.round.question
+      current_state['question'] = {
+        'description': self.round.question,
+        'data': self.round.data
+      }
       current_state['submitted'] = self.results.get(player, {}).get('raw_score') != None
       current_state['answer'] = None
       current_state['disambiguation'] = None
       current_state['waitingFor'] = self.waiting_for_players()
     elif self.state == 'round scores':
       current_state['round'] = self.round_number
-      current_state['question'] = self.round.question
+      current_state['question'] = {
+        'description': self.round.question,
+        'data': self.round.data
+      }
       current_state['results'] = self.round_results()
     elif self.state == 'final scores':
       current_state['results'] = sorted(self.final_results.values(), key=lambda result: result.get('score', 0), reverse=True)

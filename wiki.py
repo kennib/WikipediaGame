@@ -8,13 +8,11 @@ DisambiguationError = wikipedia.exceptions.DisambiguationError
 def get_random_month():
   year = random.randint(2016, 2021)
   month = random.randint(1,12)
-  print(year, month)
   return year, month
 
 def get_random_word():
   words = open('nounlist.txt').readlines()
   word = random.choice(words).strip()
-  print(word)
   return word
 
 def context(word, article):
@@ -32,6 +30,37 @@ def get_random_articles():
   response = requests.get('https://en.wikipedia.org/w/api.php', params={'action': 'query', 'list':'mostviewed','pvimoffset': random.randint(0, 1000-10), 'format': 'json'})
   articles = [article['title'] for article in response.json()['query']['mostviewed']]
   return articles
+
+def get_random_image():
+  response = requests.get('https://en.wikipedia.org/w/api.php', params={'action': 'query', 'list':'mostviewed', 'pvimoffset': random.randint(0, 1000), 'pvlimit': 1, 'format': 'json'})
+
+  article_title = response.json()['query']['mostviewed'][0]['title']
+  article = get_article(article_title)
+
+  image = None
+  while image == None:
+    response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'generator': 'images', 'prop': 'imageinfo', 'titles': article_title, 'iiprop': 'url|dimensions', 'format': 'json'})
+
+    images = response.json().get('query', {}).get('pages', {}).values()
+    content_images = [image for image in images if image['imagerepository'] != 'local']
+
+    if content_images:
+      image = random.choice(content_images)
+    else:
+      image = None
+
+  return image['title'], image['imageinfo'][0]['url'], article
+
+def get_pages_containing_image(image_title):
+  response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'list':'imageusage', 'iutitle': image_title, 'iulimit': 500, 'format': 'json'})
+
+  try:
+    image_usages = response.json().get('query').get('imageusage')
+    linked_pages = [page.get('title') for page in image_usages]
+  except (KeyError, IndexError):
+    linked_pages = []
+
+  return linked_pages
 
 def get_pageviews(article, date):
   year, month = date
