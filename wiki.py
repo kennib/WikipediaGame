@@ -8,13 +8,11 @@ DisambiguationError = wikipedia.exceptions.DisambiguationError
 def get_random_month():
   year = random.randint(2016, 2021)
   month = random.randint(1,12)
-  print(year, month)
   return year, month
 
 def get_random_word():
   words = open('nounlist.txt').readlines()
   word = random.choice(words).strip()
-  print(word)
   return word
 
 def context(word, article):
