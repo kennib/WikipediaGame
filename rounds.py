@@ -59,6 +59,7 @@ class MostViewsRound(Round):
     article = wiki.get_article(answer)
     views = wiki.get_pageviews(article.title.replace(' ', '_'), (self.year, self.month))
     score = views if self.word in article.content else 0
+    self.data['answer']['wordAppears'] = ''
     return article.title, score
 
 class ImageRound(Round):
@@ -104,6 +105,9 @@ class MostFrequentWordRound(Round):
 
   def score(self, answer):
     score = wiki.get_article_wordcount(self.article, answer)
+    if score:
+      context = wiki.context(answer, article)
+      self.data['answer']['example'] = context if context else 'Failed to find example sentence.'
     return self.article.title, score
 
 ROUNDS = [
