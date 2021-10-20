@@ -10,6 +10,8 @@
 * Ask again if no search results
 
 * Improvements
+  * Add summaries of articles
+  * Add links to articles during round scoring
   * don't allow certain answers
   * Fix 'number of players left to answer' message
   * fix scoring
