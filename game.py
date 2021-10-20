@@ -70,7 +70,10 @@ class Room():
       if player not in self.results:
         self.receive_answer(player, None)
 
-    total_score = sum([self.results[player]['raw_score'] for player in self.results.keys()])
+    total_score = 0 
+    for result in self.results.values():
+      if result.get('raw_score'):
+        total_score += result['raw_score']
 
     for player in self.players:
       if total_score == 0:
