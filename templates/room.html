@@ -43,6 +43,9 @@
       </select>
     </div>
     <div v-else-if="!submitted">
+      <div v-if="invalidAnswer">
+        {{ invalidAnswer }}
+      </div>
       <input v-model="answer" v-on:keyup.enter="submitAnswer"></input>
       <button v-on:click="submitAnswer">Submit answer</button>
     </div>
@@ -139,6 +142,11 @@ var app = new Vue({
       console.log(disambiguation)
       vm.disambiguation = disambiguation
     })
+    socket.on('invalid answer', function(invalidAnswer) {
+      vm.submitted = false
+      console.log(invalidAnswer)
+      vm.invalidAnswer = invalidAnswer.message
+    })
     socket.on('update state', function(data) {
       console.log(data)
       for (let key in data) {
@@ -176,6 +184,7 @@ var app = new Vue({
     answer: '',
     waitingFor: [],
     disambiguation: null,
+    invalidAnswer: null,
     playerChoice: null,
     playerSelection: '',
     submitted: false,

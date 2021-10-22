@@ -1,17 +1,33 @@
 import wiki
 
+STOPWORDS = open('stopwords.txt').read().splitlines()
+
+class InvalidAnswerError(Exception):
+  pass
+
 class Round():
   def __init__(self):
+    self.article = None
     self.question = ''
     self.data = {}
+    self.invalid_words = []
 
   def score(self, answer):
     raise Exception('Not implemented')
 
+  def validate_answer(self, answer):
+    answer_words = answer.strip().split()
+
+    if set(answer_words) & set(self.invalid_words) \
+      or any(word in invalid or invalid in word for invalid in self.invalid_words for word in answer_words):
+        raise InvalidAnswerError('You can\'t use a word from the question!')
+    else:
+      return True
 
 class HighestWordCountRound(Round):
   def __init__(self):
     self.word = wiki.get_random_word()
+    self.invalid_words = [self.word]
     self.question = f'Which page has the most {self.word}?'
     self.data = {
       'answer': {
@@ -31,6 +47,7 @@ class MostCommonLinksRound(Round):
   def __init__(self):
     self.article_title = ''
     self.question = ''
+    self.invalid_words = []
     self.data = {
       'answer': {
         'scoreType': 'Link count'
@@ -39,6 +56,7 @@ class MostCommonLinksRound(Round):
 
   def setup(self, article_title):
     self.article_title = article_title
+    self.invalid_words = article_title.split()
     self.question = f'Find the page with the most common links with {self.article_title}'
 
   def score(self, answer):
@@ -48,6 +66,7 @@ class MostViewsRound(Round):
   def __init__(self):
     self.year, self.month = wiki.get_random_month()
     self.word = wiki.get_random_word()
+    self.invalid_words = [self.word]
     self.question = f'Find the most popular article for {self.month}/{self.year} which contains {self.word}'
     self.data = {
       'answer': {
@@ -75,6 +94,7 @@ class ImageRound(Round):
         'scoreType': 'Raw score'
       }
     }
+    self.invalid_words = []
   
   def score(self, answer):
     article = wiki.get_article(answer)
@@ -108,6 +128,14 @@ class MostFrequentWordRound(Round):
     if score:
       self.data['answer']['article word count'] = score
     return self.article.title, score
+  
+  def validate_answer(self, answer):
+    answer = answer.strip()
+    
+    if answer in STOPWORDS:
+      raise InvalidAnswerError('Your word is too common, try a little harder!')
+    else:
+      return True
 
 ROUNDS = [
   HighestWordCountRound,

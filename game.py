@@ -46,15 +46,16 @@ class Room():
     }
 
     if answer:
+      self.round.validate_answer(answer) # Will raise an exception if the answer is invalid
+
       article_title, score = self.round.score(answer)
       print(f'{article_title} {score}')
-      
       self.results[player]['article'] = article_title
       self.results[player]['raw_score'] = score
     else:
       self.results[player]['article'] = None
       self.results[player]['raw_score'] = 0
-  
+
   def round_complete(self):
     submissions = [result for result in self.results.values() if result.get('raw_score') != None]
     return len(submissions) == len(self.players)
@@ -101,6 +102,7 @@ class Room():
       current_state['submitted'] = self.results.get(player, {}).get('raw_score') != None
       current_state['answer'] = None
       current_state['disambiguation'] = None
+      current_state['invalidAnswer'] = None
       current_state['waitingFor'] = self.waiting_for_players()
     elif self.state == 'round scores':
       current_state['round'] = self.round_number
