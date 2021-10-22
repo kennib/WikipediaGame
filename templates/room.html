@@ -1,6 +1,12 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="/static/timer.js"></script>
 
+<script src="/static/waiting_room.js"></script>
+<script src="/static/round_setup.js"></script>
+<script src="/static/round.js"></script>
+<script src="/static/round_scores.js"></script>
+<script src="/static/final_scores.js"></script>
+
 <div id="app">
   <h1>Pickapedia</h1>
   <h2>{{ room }}</h2>
@@ -8,110 +14,39 @@
     Loading...
   </div>
   <div v-if="state == 'waiting room'">
-    <h2>Players</h2>
-    <ol>
-      <li v-for="player in players" v-text="player"></li>
-    </ol>
-    <button v-on:click="nextRound">Start Game</button>
+    <waiting-room v-bind:players="players" v-bind:button-event="nextRound"/>
   </div>
   <div v-if="state == 'round setup'">
-    <div v-if="playerChoice.player == player">
-      Select an article
-      <select v-model="playerSelection" v-on:change="submitPlayerChoice">
-        <option></option>
-        <option v-for="option in playerChoice.options" v-bind:value="option">
-          {{ option }}
-        </option>
-      </select>
-    </div>
-    <div v-else>
-      {{ playerChoice.player }} is choosing an article
-    </div>
+    <round-setup
+      v-bind:player-choice="playerChoice"
+      v-bind:player="player"
+      v-bind:room="room"
+    />
   </div>
   <div v-if="state == 'round'">
-    <timer v-bind:count-down="roundTime"></timer>
-    <h2>Round {{ round }}</h2>
-    <h3 v-text="question.description"></h3>
-    <img v-if="question.data.image" v-bind:src="question.data.image" />
-    <div v-if="disambiguation">
-      Which {{ disambiguation.word }} did you mean?
-      <select v-model="answer" v-on:change="submitAnswer">
-        <option></option>
-        <option v-for="option in disambiguation.options" v-bind:value="option">
-          {{ option }}
-        </option>
-      </select>
-    </div>
-    <div v-else-if="!submitted">
-      <div v-if="invalidAnswer">
-        {{ invalidAnswer }}
-      </div>
-      <input v-model="answer" v-on:keyup.enter="submitAnswer"></input>
-      <button v-on:click="submitAnswer">Submit answer</button>
-    </div>
-    <div v-else>
-      Waiting for
-      <em v-if="waitingFor.length == 1">{{ waitingFor[0] }}</em>
-      <em v-else>{{ waitingFor.length }} players</em>
-      to enter an answer
-    </div>
+    <round-answer v-bind:room="room" v-bind:player="player"
+      v-bind:round="round"
+      v-bind:question="question"
+      v-bind:round-time="roundTime"
+      v-bind:disambiguation="disambiguation"
+      v-bind:submitted="submitted"
+      v-bind:invalid-answer="invalidAnswer"
+      v-bind:waiting-for="waitingFor"
+     />
   </div>
   <div v-if="state == 'round scores'">
-    <h2>Round {{ round }} - scores</h2>
-    <h3 v-text="question.description"></h3>
-    <img v-if="question.data.image" v-bind:src="question.data.image" />
-    <div v-if="question.data.answer">
-      <h4 v-if="question.data.answer.article">
-        Article: 
-        <span v-text="question.data.answer.article"></span>
-      </h4>
-      <h4 v-if="question.data.answer.articles">
-        Answer:
-        <span v-for="article in question.data.answer.articles">{{article}} </span>
-      </h4>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Player</th>
-          <th>Answer</th>
-          <th>Article</th>
-          <th>{{ question.data.answer.scoreType }}</th>
-          <th v-if="question.data.answer.example">Example</th>
-          <th>Round Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="result in results">
-          <td>{{ result.player }}</td>
-          <td>{{ result.answer }}</td>
-          <td>{{ result.article }}</td>
-          <td>{{ result.raw_score }}</td>
-          <th v-if="question.data.answer.example">{{ question.data.answer.example }}</th>
-          <td>{{ result.normalised_score }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <button v-on:click="nextRound">Next Round</button>
+    <round-scores
+      v-bind:round="round"
+      v-bind:question="question"
+      v-bind:results="results"
+      v-bind:button-event="nextRound"
+     />
   </div>
   <div v-if="state == 'final scores'">
-    <h2>Final scores</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Player</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(result, index) in results">
-          <td>{{ result.player }}</td>
-          <td>{{ result.score }}</td>
-          <td v-if="index==0">Winner!</td>
-        </tr>
-      </tbody>
-    </table>
-    <button v-on:click="playAgain">Play again</button>
+    <final-scores
+      v-bind:results="results"
+      v-bind:button-event="playAgain"
+    >
   </div>
 </div>
 
@@ -155,15 +90,6 @@ var app = new Vue({
     })
   },
   methods: {
-    submitAnswer: function() {
-      if (this.answer) {
-        socket.emit('send answer', { room: this.room, player: this.player, answer: this.answer })
-        this.submitted = true
-      }
-    },
-    submitPlayerChoice: function() {
-      socket.emit('send player choice', { room: this.room, choice: this.playerSelection })
-    },
     nextRound: function() {
       socket.emit('next round', { room: this.room, state: this.state, round: this.round })
     },
@@ -186,7 +112,6 @@ var app = new Vue({
     disambiguation: null,
     invalidAnswer: null,
     playerChoice: null,
-    playerSelection: '',
     submitted: false,
     results: {}
   }
