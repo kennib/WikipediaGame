@@ -12,12 +12,14 @@
 * Improvements
   * Add summaries of articles
   * Add links to articles during round scoring
-  * don't allow certain answers
   * Fix 'number of players left to answer' message
+   * Add a third submission state (need answer | processing answer | valid answer)
   * fix scoring
-    * Make score between rounds more even
     * Score duplicate answers lower
     * Show running score
-    * More detailed scoring with round-specific detail
+    * More detailed scoring with round-specific details (Round 4, image round)
   * Make the last next round button say 'final scores'
   * Turn list of articles to select from into a series of buttons that can all be seen at once
+  * Add during round scoring so people get a chance to look at scores
+  * Fix question phrasing for rounds
+  * Fix timer so that it actually shows the correct time
