@@ -1,6 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="/static/timer.js"></script>
 
+<script src="/static/enter_name.js"></script>
 <script src="/static/waiting_room.js"></script>
 <script src="/static/round_setup.js"></script>
 <script src="/static/round.js"></script>
@@ -12,6 +13,9 @@
   <h2>{{ room }}</h2>
   <div v-if="state == 'loading'">
     Loading...
+  </div>
+  <div v-if="state == 'enter name'">
+    <enter-name v-bind:on-submit="enterName" />
   </div>
   <div v-if="state == 'waiting room'">
     <waiting-room v-bind:players="players" v-bind:button-event="nextRound"/>
@@ -61,12 +65,15 @@ var app = new Vue({
     var url = new URL(window.location.href)
     vm.room = url.searchParams.get('room')
     vm.player = url.searchParams.get('name')
+    
+    if (!vm.player) {
+      vm.state = 'enter name'
+    } else {
+      vm.state = 'loading'
+    }
 
     socket.on('connect', function() {
-      socket.emit('join', {
-        player: vm.player,
-        room: vm.room,
-      })
+      vm.join()
     })
     socket.on('new players', function(players) {
       console.log(players)
@@ -87,9 +94,29 @@ var app = new Vue({
       for (let key in data) {
         vm[key] = data[key]
       }
+      vm.$forceUpdate()
     })
   },
   methods: {
+    join: function() {
+      let vm = this
+      if (vm.player && vm.room) {
+        socket.emit('join', {
+          player: vm.player,
+          room: vm.room,
+        })
+      }
+    },
+    enterName: function(player) {
+      let url = new URL(window.location.href)
+      url.searchParams.set('name', player)
+      history.replaceState(null, null, "?"+url.searchParams.toString())
+
+      this.player = player
+      this.state = 'waiting room'
+      this.join()
+      this.$forceUpdate()
+    },
     nextRound: function() {
       socket.emit('next round', { room: this.room, state: this.state, round: this.round })
     },
@@ -99,7 +126,6 @@ var app = new Vue({
   },
   data: {
     players: [],
-    state: 'loading',
     round: 0,
     roundTime: 0,
     question: {
