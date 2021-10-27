@@ -9,6 +9,9 @@ Vue.component('enter-name', {
   <div>
     <h3>Enter your name</h3>
     <input v-model="player" v-on:keyup.enter="onSubmit(player)" />
-    <input type="submit" v-on:click="onSubmit(player)" />
+    <input type="submit" 
+      v-on:click="onSubmit(player)"
+      v-bind:disabled="!player"
+     />
   </div>`
 })
