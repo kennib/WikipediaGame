@@ -49,10 +49,12 @@ class Room():
       self.round.validate_answer(answer) # Will raise an exception if the answer is invalid
 
       score = self.round.score(answer)
+      print(type(score))
       print(f'{score.article_title} {score.raw_score}')
       self.results[player]['article'] = score.article_title
       self.results[player]['raw_score'] = score.raw_score
       self.results[player]['example'] = score.example
+      self.results[player]['details'] = score.details
     else:
       self.results[player]['article'] = None
       self.results[player]['raw_score'] = 0
