@@ -1,0 +1,85 @@
+@import url("linux-libertine-webfont.css");
+
+body {
+  font-family: sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Linux Libertine','Georgia','Times',serif;
+}
+
+h2 {
+  font-weight: normal;
+  border-bottom: 1px solid grey;
+}
+
+h3 {
+  font-weight: normal;
+}
+
+form {
+  max-width: 400px;
+}
+
+form label, form label+input {
+  display: block;
+  box-sizing: border-box; /* CSS 3 rec */
+  -moz-box-sizing: border-box; /* Firefox 2 */
+  -ms-box-sizing: border-box; /* Internet Explorer 8 */
+  -webkit-box-sizing: border-box; /* Safari 3 */
+  -khtml-box-sizing: border-box; /* Konqueror */
+
+  width: 100%;
+  padding: 5px 12px;
+
+  border: 1px solid grey;
+}
+
+form label {
+  background: lightgrey;
+}
+
+form label+input {
+  border-top: none;
+  font-size: 24px;
+}
+
+button,
+input[type=button],
+input[type=submit] {
+  cursor: pointer;
+
+  font-size: 18px;
+  
+  padding: 5px 12px;
+
+  color: #fff;
+  border-style: solid;
+  background-color: #36c;
+  border-color: #36c;
+}
+
+button,
+input[type=button]:hover,
+input[type=submit]:hover {
+  background-color: #447ff5;
+  border-color: #447ff5;
+}
+
+table {
+  background-color: #f8f9fa;
+  margin: 1em 0;
+  margin-bottom: 20px;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+
+table th {
+  background-color: lightgrey;
+}
+
+table td,
+table th {
+  border: 1px solid grey;
+  padding: 5px;
+}
