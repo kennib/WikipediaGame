@@ -1,5 +1,5 @@
 Vue.component('round-answer', {
-  props: ['room', 'player', 'round', 'question', 'roundTime', 'disambiguation', 'submitted', 'waitingFor', 'invalidAnswer'],
+  props: ['room', 'player', 'round'],
   data() {
     return {
       answer: '',
@@ -19,7 +19,7 @@ Vue.component('round-answer', {
     },
   },
   watch: {
-    submitted: function(submitted) {
+    'round.submitted': function(submitted) {
       if (submitted) {
         this.answerState = 'valid answer'
       }
@@ -27,17 +27,17 @@ Vue.component('round-answer', {
   },
   template: `
   <div>
-    <timer v-bind:count-down="roundTime"></timer>
-    <h2>Round {{ round }}</h2>
-    <h3 v-text="question.description"></h3>
-    <p v-if="question.data.image">
-      <img v-bind:src="question.data.image" />
+    <timer v-bind:count-down="round.time"></timer>
+    <h2>Round {{ round.number }}</h2>
+    <h3 v-text="round.question.description"></h3>
+    <p v-if="round.question.data.image">
+      <img v-bind:src="round.question.data.image" />
     </p>
 
-    <div v-if="disambiguation">
-      Which {{ disambiguation.word }} did you mean?
+    <div v-if="round.disambiguation">
+      Which {{ round.disambiguation.word }} did you mean?
       <ul>
-        <li v-for="option in disambiguation.options">
+        <li v-for="option in round.disambiguation.options">
           <a v-on:click="chooseAnswer(option)" href="javascript:undefined">
             {{ option }}
           </a>
@@ -46,10 +46,10 @@ Vue.component('round-answer', {
     </div>
 
     <div v-else-if="answerState == 'need answer'">
-      <div v-if="invalidAnswer">
-        {{ invalidAnswer }}
+      <div v-if="round.invalidAnswer">
+        {{ round.invalidAnswer }}
       </div>
-      <form>
+      <form v-on:submit.prevent>
         <p>
           <label for="answer">Answer</label>
           <input name="answer"
@@ -67,8 +67,8 @@ Vue.component('round-answer', {
 
     <div v-else-if="answerState == 'valid answer'">
       Waiting for
-      <em v-if="waitingFor.length == 1">{{ waitingFor[0] }}</em>
-      <em v-else>{{ waitingFor.length }} players</em>
+      <em v-if="round.waitingFor.length == 1">{{ round.waitingFor[0] }}</em>
+      <em v-else>{{ round.waitingFor.length }} players</em>
       to enter an answer
     </div>
   </div>`

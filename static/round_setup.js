@@ -1,5 +1,5 @@
 Vue.component('round-setup', {
-  props: ['playerChoice', 'player', 'room'],
+  props: ['room', 'player', 'round'],
   data() {
     return {
       playerSelection: '',
@@ -16,17 +16,17 @@ Vue.component('round-setup', {
   },
   template: `
   <div>
-    <div v-if="playerChoice.player == player">
+    <div v-if="round.playerChoice.player == player">
       <h3>Select an article</h3>
       <div class="options">
-        <button v-for="option in playerChoice.options"
+        <button v-for="option in round.playerChoice.options"
           v-on:click="choose(option)">
           {{ option }}
         </button>
       </div>
     </div>
     <div v-else>
-      {{ playerChoice.player }} is choosing an article
+      {{ round.playerChoice.player }} is choosing an article
     </div>
   </div>
   `

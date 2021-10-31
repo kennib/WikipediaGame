@@ -2,6 +2,8 @@
 
 <link rel="stylesheet" href="/static/css/main.css">
 
+<script src="/static/lib/mergeDeep.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="/static/timer.js"></script>
 
@@ -30,27 +32,21 @@
   </div>
   <div v-if="state == 'round setup'">
     <round-setup
-      v-bind:player-choice="playerChoice"
-      v-bind:player="player"
       v-bind:room="room"
+      v-bind:player="player"
+      v-bind:round="round"
     />
   </div>
   <div v-if="state == 'round'">
-    <round-answer v-bind:room="room" v-bind:player="player"
+    <round-answer
+      v-bind:room="room"
+      v-bind:player="player"
       v-bind:round="round"
-      v-bind:question="question"
-      v-bind:round-time="roundTime"
-      v-bind:disambiguation="disambiguation"
-      v-bind:submitted="submitted"
-      v-bind:invalid-answer="invalidAnswer"
-      v-bind:waiting-for="waitingFor"
      />
   </div>
   <div v-if="state == 'round scores'">
     <round-scores
       v-bind:round="round"
-      v-bind:question="question"
-      v-bind:results="results"
       v-bind:button-event="nextRound"
      />
   </div>
@@ -95,20 +91,24 @@ var app = new Vue({
       vm.players = players
     })
     socket.on('disambiguation', function(disambiguation) {
-      vm.submitted = false
+      vm.round.submitted = false
       console.log(disambiguation)
-      vm.disambiguation = disambiguation
+      vm.round.disambiguation = disambiguation
     })
     socket.on('invalid answer', function(invalidAnswer) {
-      vm.submitted = false
+      vm.round.submitted = false
       console.log(invalidAnswer)
-      vm.invalidAnswer = invalidAnswer.message
+      vm.round.invalidAnswer = invalidAnswer.message
     })
     socket.on('update state', function(data) {
       console.log(data)
       for (let key in data) {
         vm[key] = data[key]
       }
+      vm.$forceUpdate()
+    })
+    socket.on('partial update state', function(data) {
+      mergeDeep(vm, data)
       vm.$forceUpdate()
     })
   },
@@ -133,28 +133,31 @@ var app = new Vue({
       this.$forceUpdate()
     },
     nextRound: function() {
-      socket.emit('next round', { room: this.room, state: this.state, round: this.round })
+      socket.emit('next round', { room: this.room, state: this.state, round: this.round.number })
     },
     playAgain: function() {
       socket.emit('play again', { room: this.room })
     }
   },
-  data: {
-    players: [],
-    round: 0,
-    roundTime: 0,
-    question: {
-      description: '',
-      data: {
+  data: function() {
+    return {
+      players: [],
+      round: {
+        number: 0,
+        time: 0,
+        question: {
+          description: '',
+          data: {
+          },
+        },
+        waitingFor: [],
+        disambiguation: {
+          word: '',
+          options: [],
+        },
+        results: {},
       },
-    },
-    answer: '',
-    waitingFor: [],
-    disambiguation: null,
-    invalidAnswer: null,
-    playerChoice: null,
-    submitted: false,
-    results: {}
+    }
   }
 })
 </script>

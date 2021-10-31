@@ -73,7 +73,7 @@ def send_answer(data):
   try:
     room.receive_answer(data['player'], data['answer'])
     emit('update state', room.current_state(data['player']), json=True)
-    emit('update state', {'waitingFor': room.waiting_for_players()}, json=True, broadcast=True, room=room_code)
+    emit('partial update state', {'round': {'waitingFor': room.waiting_for_players()}}, json=True, broadcast=True, room=room_code)
   except wiki.DisambiguationError as e:
     emit('disambiguation', {'word': data['answer'], 'options': e.options})
   except InvalidAnswerError as e:

@@ -107,26 +107,32 @@ class Room():
     current_state = { 'state': self.state, 'players': list(self.players) }
 
     if self.state == 'round setup':
-      current_state['playerChoice'] = self.player_choice
+      current_state['round'] = {
+        'playerChoice': self.player_choice,
+      }
     elif self.state == 'round':
-      current_state['roundTime'] = self.round_time
-      current_state['round'] = self.round_number
-      current_state['question'] = {
-        'description': self.round.question,
-        'data': self.round.data
+      current_state['round'] = {
+        'number': self.round_number,
+        'time': self.round_time,
+        'question': {
+            'description': self.round.question,
+            'data': self.round.data
+        },
+        'submitted': self.results.get(player, {}).get('raw_score') != None,
+        'answer': None,
+        'disambiguation': None,
+        'invalidAnswer': None,
+        'waitingFor': self.waiting_for_players(),
       }
-      current_state['submitted'] = self.results.get(player, {}).get('raw_score') != None
-      current_state['answer'] = None
-      current_state['disambiguation'] = None
-      current_state['invalidAnswer'] = None
-      current_state['waitingFor'] = self.waiting_for_players()
     elif self.state == 'round scores':
-      current_state['round'] = self.round_number
-      current_state['question'] = {
-        'description': self.round.question,
-        'data': self.round.data
+      current_state['round'] = {
+        'number': self.round_number,
+        'question': {
+          'description': self.round.question,
+          'data': self.round.data
+        },
+        'results': self.round_results()
       }
-      current_state['results'] = self.round_results()
     elif self.state == 'final scores':
       current_state['results'] = sorted(self.final_results.values(), key=lambda result: result.get('score', 0), reverse=True)
 
