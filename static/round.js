@@ -54,7 +54,8 @@ Vue.component('round-answer', {
           <label for="answer">Answer</label>
           <input name="answer"
             v-model="answer"
-            v-on:keyup.enter="submitAnswer"></input>
+            v-on:keyup.enter="submitAnswer"
+            autocomplete="off"></input>
         </p>
         <button v-on:click="submitAnswer">Submit answer</button>
       </form>
