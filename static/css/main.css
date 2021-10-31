@@ -83,3 +83,13 @@ table th {
   border: 1px solid grey;
   padding: 5px;
 }
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 600px;
+}
+
+.options button {
+  margin: 5px;
+}
