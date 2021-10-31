@@ -3,18 +3,26 @@ Vue.component('round-answer', {
   data() {
     return {
       answer: '',
+      answerState: 'need answer',
     }
   },
   methods: {
     submitAnswer: function() {
       if (this.answer) {
         socket.emit('send answer', { room: this.room, player: this.player, answer: this.answer })
-        this.submitted = true
+        this.answerState = 'processing answer'
       }
     },
     chooseAnswer: function(option) {
       this.answer = option
       this.submitAnswer()
+    },
+  },
+  watch: {
+    submitted: function(submitted) {
+      if (submitted) {
+        this.answerState = 'valid answer'
+      }
     },
   },
   template: `
@@ -37,7 +45,7 @@ Vue.component('round-answer', {
       </ul>
     </div>
 
-    <div v-else-if="!submitted">
+    <div v-else-if="answerState == 'need answer'">
       <div v-if="invalidAnswer">
         {{ invalidAnswer }}
       </div>
@@ -52,7 +60,11 @@ Vue.component('round-answer', {
       </form>
     </div>
 
-    <div v-else>
+    <div v-else-if="answerState == 'processing answer'">
+      Evaluating your answer...
+    </div>
+
+    <div v-else-if="answerState == 'valid answer'">
       Waiting for
       <em v-if="waitingFor.length == 1">{{ waitingFor[0] }}</em>
       <em v-else>{{ waitingFor.length }} players</em>
