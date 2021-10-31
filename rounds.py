@@ -6,10 +6,12 @@ class InvalidAnswerError(Exception):
   pass
 
 class Score():
-  def __init__(self, article_title, raw_score, example=None):
+  def __init__(self, article_title, raw_score):
     self.article_title = article_title
     self.raw_score = raw_score
-    self.example = example
+    #TODO possibly only need details?
+    self.example = None 
+    self.details = None
 
 class Round():
   def __init__(self):
@@ -48,7 +50,9 @@ class HighestWordCountRound(Round):
     if raw_score:
       context = wiki.context(self.word, article)
       self.data['answer']['show_example'] = True 
-    return Score(article.title, raw_score, context)
+    score = Score(article.title, raw_score)
+    score.example = context
+    return score
 
 class MostCommonLinksRound(Round):
   def __init__(self):
@@ -106,15 +110,23 @@ class ImageRound(Round):
   
   def score(self, answer):
     article = wiki.get_article(answer)
+    details = ''
+    self.data['answer']['show_details'] = True 
     if article.title in self.articles:
       raw_score = 1
+      details = 'Selected article contains the image'
     elif set(article.links) & set(self.articles):
       raw_score = 0.75
+      details = 'Selected article links to article containing the image'
     elif article.title in self.article.links:
       raw_score = 0.5
+      details = 'Selected article is linked to by article containing the image'
     else:
       raw_score = 0
-    return Score(article.title, raw_score)
+      details = 'Selected article does not contain the image'
+    score = Score(article.title, raw_score)
+    score.details = details 
+    return score
 
 class MostFrequentWordRound(Round):
   def __init__(self):
@@ -135,7 +147,7 @@ class MostFrequentWordRound(Round):
     score = wiki.get_article_wordcount(self.article, answer)
     if score:
       self.data['answer']['article word count'] = score
-    return self.article.title, score
+    return Score(self.article.title, score)
   
   def validate_answer(self, answer):
     answer = answer.strip()
