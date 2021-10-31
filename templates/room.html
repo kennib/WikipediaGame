@@ -13,8 +13,12 @@
 <script src="/static/final_scores.js"></script>
 
 <div id="app">
-  <h1>Pickapedia</h1>
-  <h2>{{ room }}</h2>
+  <header>
+    <h1>Pickapedia</h1>
+    <span class="player">{{ player }}</span>
+    <span class="room">{{ room }}</span>
+  </header>
+  
   <div v-if="state == 'loading'">
     Loading...
   </div>
