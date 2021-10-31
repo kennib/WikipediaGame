@@ -1,5 +1,5 @@
 Vue.component('round-answer', {
-  props: ['room', 'player', 'round'],
+  props: ['room', 'player', 'round', 'syncTime'],
   data() {
     return {
       answer: '',
@@ -17,6 +17,11 @@ Vue.component('round-answer', {
       this.answer = option
       this.submitAnswer()
     },
+    timeLeft: function() {
+      let now = Math.floor(Date.now() / 1000)
+      let duration = this.round.finishTime - now - this.syncTime
+      return duration
+    }
   },
   watch: {
     'round.submitted': function(submitted) {
@@ -41,7 +46,9 @@ Vue.component('round-answer', {
       <img v-bind:src="round.question.data.image" />
     </p>
 
-    <timer v-bind:count-down="round.time"></timer>
+    <timer
+      v-bind:duration="round.time"
+      v-bind:start-time="timeLeft()" />
 
     <div v-if="round.disambiguation">
       Which {{ round.disambiguation.word }} did you mean?

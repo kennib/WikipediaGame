@@ -44,6 +44,7 @@
       v-bind:room="room"
       v-bind:player="player"
       v-bind:round="round"
+      v-bind:sync-time="syncTime"
      />
   </div>
   <div v-if="state == 'round scores'">
@@ -141,8 +142,15 @@ var app = new Vue({
       socket.emit('play again', { room: this.room })
     }
   },
+  watch: {
+    serverTime: function(serverTime) {
+      let now = Math.floor(Date.now() / 1000)
+      this.syncTime = serverTime - now
+    }
+  },
   data: function() {
     return {
+      serverTime: Math.floor(Date.now() / 1000),
       players: [],
       round: {
         number: 0,
