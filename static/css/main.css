@@ -10,17 +10,19 @@ body {
   padding: 10px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2 {
   font-family: 'Linux Libertine','Georgia','Times',serif;
 }
 
 h2 {
+  font-size: 1.5em;
   font-weight: normal;
   border-bottom: 1px solid grey;
 }
 
 h3 {
-  font-weight: normal;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 header {
@@ -51,6 +53,16 @@ header .room::before {
 
 content {
   padding: 10px;
+}
+
+h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+h2 small {
+  font-size: 16px;
 }
 
 form {

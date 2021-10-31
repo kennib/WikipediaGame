@@ -27,12 +27,21 @@ Vue.component('round-answer', {
   },
   template: `
   <div>
-    <timer v-bind:count-down="round.time"></timer>
-    <h2>Round {{ round.number }}</h2>
-    <h3 v-text="round.question.description"></h3>
+    <h2>
+      {{ round.title }}
+      <small>
+        Round {{ round.number }}
+      </small>
+    </h2>
+
+    <h3>Enter your answer</h3>
+
+    <p v-text="round.question.description"></p>
     <p v-if="round.question.data.image">
       <img v-bind:src="round.question.data.image" />
     </p>
+
+    <timer v-bind:count-down="round.time"></timer>
 
     <div v-if="round.disambiguation">
       Which {{ round.disambiguation.word }} did you mean?

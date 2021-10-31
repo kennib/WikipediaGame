@@ -16,8 +16,16 @@ Vue.component('round-setup', {
   },
   template: `
   <div>
+    <h2>
+      {{ round.title }}
+      <small>
+        Round {{ round.number }}
+      </small>
+    </h2>
+    
+    <h3>Choose an article</h3>
+
     <div v-if="round.playerChoice.player == player">
-      <h3>Select an article</h3>
       <div class="options">
         <button v-for="option in round.playerChoice.options"
           v-on:click="choose(option)">

@@ -6,8 +6,16 @@ Vue.component('round-scores', {
   },
   template:`
   <div>
-    <h2>Round {{ round.number }} - scores</h2>
-    <h3 v-text="round.question.description"></h3>
+    <h2>
+      {{ round.title }}
+      <small>
+        Round {{ round.number }}
+      </small>
+    </h2>
+
+    <h3>Scores</h3>
+    
+    <p v-text="round.question.description"></p>
     <p v-if="round.question.data.image">
       <img v-bind:src="round.question.data.image" />
     </p>

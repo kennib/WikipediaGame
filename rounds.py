@@ -15,6 +15,7 @@ class Score():
 
 class Round():
   def __init__(self):
+    self.title = ''
     self.article = None
     self.question = ''
     self.data = {}
@@ -34,6 +35,7 @@ class Round():
 
 class HighestWordCountRound(Round):
   def __init__(self):
+    self.title = 'Article word count round'
     self.word = wiki.get_random_word()
     self.invalid_words = [self.word]
     self.question = f'Which page has the most {self.word}?'
@@ -55,6 +57,7 @@ class HighestWordCountRound(Round):
 
 class MostCommonLinksRound(Round):
   def __init__(self):
+    self.title = 'Most common links round'
     self.article_title = ''
     self.question = ''
     self.invalid_words = []
@@ -75,6 +78,7 @@ class MostCommonLinksRound(Round):
 
 class MostViewsRound(Round):
   def __init__(self):
+    self.title = 'Most popular article round'
     self.year, self.month = wiki.get_random_month()
     self.word = wiki.get_random_word()
     self.invalid_words = [self.word]
@@ -94,6 +98,7 @@ class MostViewsRound(Round):
 
 class ImageRound(Round):
   def __init__(self):
+    self.title = 'The image round'
     self.image, image_url, self.article = wiki.get_random_image()
     self.articles = wiki.get_pages_containing_image(self.image)
     self.question = f'Find an article containing the following image'
@@ -129,6 +134,7 @@ class ImageRound(Round):
 
 class MostFrequentWordRound(Round):
   def __init__(self):
+    self.title = 'Highest word count round'
     self.article_title = ''
     self.question = ''
     self.data = {

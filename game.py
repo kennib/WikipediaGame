@@ -109,9 +109,12 @@ class Room():
     if self.state == 'round setup':
       current_state['round'] = {
         'playerChoice': self.player_choice,
+        'title': self.round.title,
+        'number': self.round_number,
       }
     elif self.state == 'round':
       current_state['round'] = {
+        'title': self.round.title,
         'number': self.round_number,
         'time': self.round_time,
         'question': {
@@ -126,6 +129,7 @@ class Room():
       }
     elif self.state == 'round scores':
       current_state['round'] = {
+        'title': self.round.title,
         'number': self.round_number,
         'question': {
           'description': self.round.question,
