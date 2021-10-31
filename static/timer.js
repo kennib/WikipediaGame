@@ -30,5 +30,11 @@ Vue.component('timer', {
       immediate: true // This ensures the watcher is triggered upon creation
     },
   },
-  template: '<div><div v-bind:style="{width: timeFormatted(), height: \'30px\', backgroundColor: \'grey\', textAlign: \'center\'}">{{ time }} seconds</div></div>',
+  template: `
+<div class="timer">
+  <div class="time"
+       v-bind:style="{width: timeFormatted()}">
+    {{ time }} seconds
+  </div>
+</div>`,
 })
