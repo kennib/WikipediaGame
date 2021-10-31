@@ -1,0 +1,15 @@
+.timer {
+  display: flex;
+  flex-wrap: nowrap;
+
+  background-color: darkgrey;
+  border-color: #36c;
+}
+
+.time {
+  white-space: nowrap;
+  padding: 5px;
+
+  background-color: #36c;
+  color: white;
+}
