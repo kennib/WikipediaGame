@@ -1,6 +1,6 @@
 import wiki
 
-STOPWORDS = open('stopwords.txt').read().splitlines()
+STOPWORDS = open('data/stopwords.txt').read().splitlines()
 
 class InvalidAnswerError(Exception):
   pass

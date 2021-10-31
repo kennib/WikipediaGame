@@ -11,7 +11,7 @@ def get_random_month():
   return year, month
 
 def get_random_word():
-  words = open('nounlist.txt').readlines()
+  words = open('data/nounlist.txt').readlines()
   word = random.choice(words).strip()
   return word
 
