@@ -66,9 +66,16 @@ var app = new Vue({
   el: '#app',
   beforeCreate: function() {
     vm = this
-    var url = new URL(window.location.href)
-    vm.room = url.searchParams.get('room')
-    vm.player = url.searchParams.get('name')
+    
+    let url = new URL(window.location.href)
+    let path = url.pathname.split('/')
+
+    vm.room = path[path.length-1]
+
+    let cookies = document.cookie.split('; ')
+    let playerCookie = cookies.find(function(row) { return row.startsWith('player=') })
+
+    vm.player = playerCookie.split('=')[1];
     
     if (!vm.player) {
       vm.state = 'enter name'

@@ -1,9 +1,19 @@
 import wiki
 import random
+import string
 
 from rounds import ROUNDS
 
 POINTS_PER_ROUND = 1000
+
+def generate_room_code(exclude=[]):
+  room_code = None
+
+  while not room_code or room_code in exclude:
+    letters = random.choices(string.ascii_uppercase, k=4)
+    room_code = ''.join(letters)
+
+  return room_code
 
 class Room():
   def __init__(self, room_code, round_time=30):

@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, redirect, make_response
 from flask_socketio import SocketIO, emit, join_room
 import wiki
-from game import Room
+from game import Room, generate_room_code
 from rounds import InvalidAnswerError
 
 app = Flask(__name__)
@@ -14,11 +14,22 @@ def home():
   return render_template('home.html')
 
 @app.route('/room', methods=['GET'])
-def room():
-  room_code = request.args.get('room')
-  player = request.args.get('name')
+def join_a_room():
+  room_code = request.args.get('room') or generate_room_code(exclude=rooms.keys())
+  room_code = room_code.upper()
+
   room = rooms.get(room_code, Room(room_code))
   rooms[room_code] = room
+
+  player = request.args.get('name')
+
+  response = make_response(redirect(f'/room/{room_code}'))
+  response.set_cookie('player', player)
+
+  return response
+
+@app.route('/room/<room_code>', methods=['GET'])
+def room(room_code):
   return send_from_directory('templates', 'room.html')
 
 @socketio.on('join')
