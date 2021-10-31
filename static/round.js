@@ -12,22 +12,29 @@ Vue.component('round-answer', {
         this.submitted = true
       }
     },
+    chooseAnswer: function(option) {
+      this.answer = option
+      this.submitAnswer()
+    },
   },
   template: `
   <div>
     <timer v-bind:count-down="roundTime"></timer>
     <h2>Round {{ round }}</h2>
     <h3 v-text="question.description"></h3>
-    <img v-if="question.data.image" v-bind:src="question.data.image" />
+    <p v-if="question.data.image">
+      <img v-bind:src="question.data.image" />
+    </p>
 
     <div v-if="disambiguation">
       Which {{ disambiguation.word }} did you mean?
-      <select v-model="answer" v-on:change="submitAnswer">
-        <option></option>
-        <option v-for="option in disambiguation.options" v-bind:value="option">
-          {{ option }}
-        </option>
-      </select>
+      <ul>
+        <li v-for="option in disambiguation.options">
+          <a v-on:click="chooseAnswer(option)" href="javascript:undefined">
+            {{ option }}
+          </a>
+        </li>
+      </ul>
     </div>
 
     <div v-else-if="!submitted">
