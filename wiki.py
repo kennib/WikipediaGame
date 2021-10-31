@@ -19,7 +19,7 @@ def context(word, article):
   for sentence in re.split('\n|\.', article.content):
     words = re.sub('[^\w\d\s]', '', sentence).split()
     if word in words:
-      return sentence
+      return sentence + '.'
 
 def get_article(article_title):
   search = wikipedia.search(article_title)
