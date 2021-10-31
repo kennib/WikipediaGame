@@ -15,11 +15,11 @@
   * Fix 'number of players left to answer' message
    * Add a third submission state (need answer | processing answer | valid answer)
   * fix scoring
-    * Score duplicate answers lower
-    * Show running score
-    * More detailed scoring with round-specific details (Round 4, image round)
+    * Score duplicate answers lower)
   * Make the last next round button say 'final scores'
-  * Turn list of articles to select from into a series of buttons that can all be seen at once
-  * Add during round scoring so people get a chance to look at scores
   * Fix question phrasing for rounds
   * Fix timer so that it actually shows the correct time
+  * Add a list of most common article words on round 4 answer screen
+  * Throw an InvalidAnswer exception when an article doesn't exist
+  * Article context: get full sentences
+  * test/fix examples in scoring
