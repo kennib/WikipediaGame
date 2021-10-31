@@ -1,6 +1,7 @@
 import wiki
 import random
 import string
+from time import time
 
 from rounds import ROUNDS
 
@@ -16,11 +17,12 @@ def generate_room_code(exclude=[]):
   return room_code
 
 class Room():
-  def __init__(self, room_code, round_time=30):
+  def __init__(self, room_code, round_time=60):
     self.code = room_code
     self.players = set()
     self.state = 'waiting room'
 
+    self.finish_time = None
     self.round_time = round_time
     self.round = None
 
@@ -40,10 +42,12 @@ class Room():
     if self.round_number < len(ROUNDS):
       self.round_number += 1
       self.round = ROUNDS[self.round_number - 1]()
-      self.state = 'round'
       if hasattr(self.round, 'setup'):
         self.state = 'round setup'
         self.player_choice = {'player': random.choice(list(self.players)), 'options':  wiki.get_random_articles()}
+      else:
+        self.state = 'round'
+        self.finish_time = int(time()) + self.round_time
     else:
       self.state = 'final scores'
 
@@ -104,7 +108,11 @@ class Room():
     return sorted(results, key=lambda result: result.get('normalised_score', 0), reverse=True)
 
   def current_state(self, player=None):
-    current_state = { 'state': self.state, 'players': list(self.players) }
+    current_state = {
+      'serverTime': int(time()),
+      'state': self.state,
+      'players': list(self.players)
+    }
 
     if self.state == 'round setup':
       current_state['round'] = {
@@ -117,6 +125,7 @@ class Room():
         'title': self.round.title,
         'number': self.round_number,
         'time': self.round_time,
+        'finishTime': self.finish_time,
         'question': {
             'description': self.round.question,
             'data': self.round.data
@@ -145,4 +154,5 @@ class Room():
   def setup_round(self, article_title):
     print('setup_round')
     self.round.setup(article_title)
+    self.finish_time = int(time()) + self.round_time
     self.state = 'round'

@@ -1,14 +1,14 @@
 Vue.component('timer', {
-  props: ['countDown'],
+  props: ['duration', 'startTime'],
   data() {
     return {
       enabled: true,
-      time: 30
+      time: this.startTime || this.duration,
     }
   },
   methods: {
     timeFormatted: function() {
-      return (this.time/this.countDown*100)+'%'
+      return (this.time/this.duration*100)+'%'
     }
   },
   watch: {
