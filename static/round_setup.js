@@ -8,18 +8,22 @@ Vue.component('round-setup', {
   methods: {
     submitPlayerChoice: function() {
       socket.emit('send player choice', { room: this.room, choice: this.playerSelection })
-    }
+    },
+    choose: function(choice) {
+      this.playerSelection = choice
+      this.submitPlayerChoice()
+    },
   },
   template: `
   <div>
     <div v-if="playerChoice.player == player">
-      Select an article
-      <select v-model="playerSelection" v-on:change="submitPlayerChoice">
-        <option></option>
-        <option v-for="option in playerChoice.options" v-bind:value="option">
+      <h3>Select an article</h3>
+      <div class="options">
+        <button v-for="option in playerChoice.options"
+          v-on:click="choose(option)">
           {{ option }}
-        </option>
-      </select>
+        </button>
+      </div>
     </div>
     <div v-else>
       {{ playerChoice.player }} is choosing an article
