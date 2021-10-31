@@ -34,8 +34,15 @@ Vue.component('round-answer', {
       <div v-if="invalidAnswer">
         {{ invalidAnswer }}
       </div>
-      <input v-model="answer" v-on:keyup.enter="submitAnswer"></input>
-      <button v-on:click="submitAnswer">Submit answer</button>
+      <form>
+        <p>
+          <label for="answer">Answer</label>
+          <input name="answer"
+            v-model="answer"
+            v-on:keyup.enter="submitAnswer"></input>
+        </p>
+        <button v-on:click="submitAnswer">Submit answer</button>
+      </form>
     </div>
 
     <div v-else>
