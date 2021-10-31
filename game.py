@@ -48,10 +48,11 @@ class Room():
     if answer:
       self.round.validate_answer(answer) # Will raise an exception if the answer is invalid
 
-      article_title, score = self.round.score(answer)
-      print(f'{article_title} {score}')
-      self.results[player]['article'] = article_title
-      self.results[player]['raw_score'] = score
+      score = self.round.score(answer)
+      print(f'{score.article_title} {score.raw_score}')
+      self.results[player]['article'] = score.article_title
+      self.results[player]['raw_score'] = score.raw_score
+      self.results[player]['example'] = score.example
     else:
       self.results[player]['article'] = None
       self.results[player]['raw_score'] = 0
@@ -79,8 +80,10 @@ class Room():
     for player in self.players:
       if total_score == 0:
         self.results[player]['normalised_score'] = 0
-      else:
+      elif self.results[player].get('raw_score'):
         self.results[player]['normalised_score'] = round((self.results[player]['raw_score'] / total_score) * POINTS_PER_ROUND)
+      else:
+        self.results[player]['normalised_score'] = 0
       self.final_results[player]['score'] += self.results[player]['normalised_score']
 
   def round_results(self):
