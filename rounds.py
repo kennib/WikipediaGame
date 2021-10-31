@@ -5,6 +5,12 @@ STOPWORDS = open('data/stopwords.txt').read().splitlines()
 class InvalidAnswerError(Exception):
   pass
 
+class Score():
+  def __init__(self, article_title, raw_score, example=None):
+    self.article_title = article_title
+    self.raw_score = raw_score
+    self.example = example
+
 class Round():
   def __init__(self):
     self.article = None
@@ -37,11 +43,12 @@ class HighestWordCountRound(Round):
 
   def score(self, answer):
     article = wiki.get_article(answer)
-    score = wiki.get_article_wordcount(article, self.word)
-    if score:
-      context = wiki.context(answer, article)
-      self.data['answer']['example'] = context if context else 'Failed to find example sentence.'
-    return article.title, score
+    raw_score = wiki.get_article_wordcount(article, self.word)
+    context = None
+    if raw_score:
+      context = wiki.context(self.word, article)
+      self.data['answer']['show_example'] = True 
+    return Score(article.title, raw_score, context)
 
 class MostCommonLinksRound(Round):
   def __init__(self):
@@ -60,7 +67,8 @@ class MostCommonLinksRound(Round):
     self.question = f'Find the page with the most common links with {self.article_title}'
 
   def score(self, answer):
-    return wiki.get_common_links(self.article_title, answer)
+    article_title, raw_score =  wiki.get_common_links(self.article_title, answer)
+    return Score(article_title, raw_score)
 
 class MostViewsRound(Round):
   def __init__(self):
@@ -77,9 +85,9 @@ class MostViewsRound(Round):
   def score(self, answer):
     article = wiki.get_article(answer)
     views = wiki.get_pageviews(article.title.replace(' ', '_'), (self.year, self.month))
-    score = views if self.word in article.content else 0
+    raw_score = views if self.word in article.content else 0
     self.data['answer']['wordAppears'] = ''
-    return article.title, score
+    return Score(article.title, raw_score)
 
 class ImageRound(Round):
   def __init__(self):
@@ -99,14 +107,14 @@ class ImageRound(Round):
   def score(self, answer):
     article = wiki.get_article(answer)
     if article.title in self.articles:
-      score = 1
+      raw_score = 1
     elif set(article.links) & set(self.articles):
-      score = 0.75
+      raw_score = 0.75
     elif article.title in self.article.links:
-      score = 0.5
+      raw_score = 0.5
     else:
-      score = 0
-    return article.title, score
+      raw_score = 0
+    return Score(article.title, raw_score)
 
 class MostFrequentWordRound(Round):
   def __init__(self):

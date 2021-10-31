@@ -28,7 +28,7 @@ Vue.component('round-scores', {
           <th>Answer</th>
           <th>Article</th>
           <th>{{ question.data.answer.scoreType }}</th>
-          <th v-if="question.data.answer.example">Example</th>
+          <th v-if="question.data.answer.show_example">Example</th>
           <th>Round Score</th>
         </tr>
       </thead>
@@ -38,7 +38,7 @@ Vue.component('round-scores', {
           <td>{{ result.answer }}</td>
           <td>{{ result.article }}</td>
           <td>{{ result.raw_score }}</td>
-          <th v-if="question.data.answer.example">{{ question.data.answer.example }}</th>
+          <td v-if="question.data.answer.show_example">{{ result.example }}</td>
           <td>{{ result.normalised_score }}</td>
         </tr>
       </tbody>
