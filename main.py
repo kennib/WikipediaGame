@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, send_from_directory
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room
 import wiki
 from game import Room
 from rounds import InvalidAnswerError
@@ -25,10 +25,13 @@ def room():
 def join(data):
   room_code = data['room']
   player = data['player']
+  
   room = rooms.get(room_code, Room(room_code))
   rooms[room_code] = room
   room.add_player(player)
-  emit('new players', list(room.players), json=True, broadcast=True)
+
+  join_room(room_code)
+  emit('new players', list(room.players), json=True, broadcast=True, room=room_code)
   emit('update state', room.current_state(player), json=True)
 
 @socketio.on('next round')
@@ -39,7 +42,7 @@ def next_round(data):
   if data['state'] == room.state and room.state == 'waiting room' or data['round'] == room.round_number:
     room.next_round()
     print('update state', room.current_state())
-    emit('update state', room.current_state(), json=True, broadcast=True)
+    emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
     print('round begin')
 
@@ -49,16 +52,17 @@ def next_round(data):
 
     if room.state == 'round' and room.round == this_round:
       room.score_round()
-      emit('update state', room.current_state(), json=True, broadcast=True)
+      emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
 @socketio.on('send answer')
 def send_answer(data):
-  room = rooms[data['room']]
+  room_code = data['room']
+  room = rooms[room_code]
 
   try:
     room.receive_answer(data['player'], data['answer'])
     emit('update state', room.current_state(data['player']), json=True)
-    emit('update state', {'waitingFor': room.waiting_for_players()}, json=True, broadcast=True)
+    emit('update state', {'waitingFor': room.waiting_for_players()}, json=True, broadcast=True, room=room_code)
   except wiki.DisambiguationError as e:
     emit('disambiguation', {'word': data['answer'], 'options': e.options})
   except InvalidAnswerError as e:
@@ -66,7 +70,7 @@ def send_answer(data):
   
   if room.round_complete():
     room.score_round()
-    emit('update state', room.current_state(), json=True, broadcast=True)
+    emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
 @socketio.on('play again')
 def play_again(data):
@@ -77,14 +81,15 @@ def play_again(data):
   for player in players:
     room.add_player(player)
 
-  emit('update state', room.current_state(), json=True, broadcast=True)
+  emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
 @socketio.on('send player choice')
 def handle_player_choice(data):
-  room = rooms[data['room']]
+  room_code = data['room']
+  room = rooms[room_code]
   article_title = data['choice']
   room.setup_round(article_title)
-  emit('update state', room.current_state(), json=True, broadcast=True)
+  emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
 if __name__ == '__main__':
   #console.game()
