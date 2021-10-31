@@ -46,12 +46,11 @@ class HighestWordCountRound(Round):
   def score(self, answer):
     article = wiki.get_article(answer)
     raw_score = wiki.get_article_wordcount(article, self.word)
-    context = None
+    score = Score(article.title, raw_score)
     if raw_score:
       context = wiki.context(self.word, article)
       self.data['answer']['show_example'] = True 
-    score = Score(article.title, raw_score)
-    score.example = context
+      score.example = context
     return score
 
 class MostCommonLinksRound(Round):
@@ -144,10 +143,15 @@ class MostFrequentWordRound(Round):
     self.question = f'Guess the which word appears the most in {self.article_title}'
 
   def score(self, answer):
-    score = wiki.get_article_wordcount(self.article, answer)
-    if score:
-      self.data['answer']['article word count'] = score
-    return Score(self.article.title, score)
+    raw_score = wiki.get_article_wordcount(self.article, answer)
+    if raw_score:
+      self.data['answer']['article word count'] = raw_score
+    score = Score(self.article.title, raw_score)
+    if raw_score:
+      context = wiki.context(answer, self.article)
+      self.data['answer']['show_example'] = True 
+      score.example = context
+    return score
   
   def validate_answer(self, answer):
     answer = answer.strip()
