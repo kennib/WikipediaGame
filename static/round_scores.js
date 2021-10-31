@@ -8,7 +8,9 @@ Vue.component('round-scores', {
   <div>
     <h2>Round {{ round }} - scores</h2>
     <h3 v-text="question.description"></h3>
-    <img v-if="question.data.image" v-bind:src="question.data.image" />
+    <p v-if="question.data.image">
+      <img v-bind:src="question.data.image" />
+    </p>
     <div v-if="question.data.answer">
       <h4 v-if="question.data.answer.article">
         Article: 
