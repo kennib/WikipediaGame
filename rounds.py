@@ -59,7 +59,7 @@ class MostCommonLinksRound(Round):
   def __init__(self):
     self.title = 'Most common links round'
     self.article_title = ''
-    self.question = ''
+    self.question = 'Find the article with the most common links with '
     self.invalid_words = []
     self.data = {
       'answer': {
@@ -68,9 +68,14 @@ class MostCommonLinksRound(Round):
     }
 
   def setup(self, article_title):
+    article = wiki.get_article(article_title)
+    self.data['article'] = {
+      'title': article_title,
+      'summary': wiki.summarise(article),
+      'url': article.url,
+    }
     self.article_title = article_title
     self.invalid_words = article_title.split()
-    self.question = f'Find the page with the most common links with {self.article_title}'
 
   def score(self, answer):
     article_title, raw_score =  wiki.get_common_links(self.article_title, answer)
@@ -136,7 +141,7 @@ class MostFrequentWordRound(Round):
   def __init__(self):
     self.title = 'Highest word count round'
     self.article_title = ''
-    self.question = ''
+    self.question = 'Guess the most common word in the article for '
     self.data = {
       'answer': {
         'scoreType': 'Word count'
@@ -144,9 +149,14 @@ class MostFrequentWordRound(Round):
     }
   
   def setup(self, article_title):
+    article = wiki.get_article(article_title)
+    self.data['article'] = {
+      'title': article_title,
+      'summary': wiki.summarise(article),
+      'url': article.url,
+    }
     self.article_title = article_title
-    self.article = wiki.get_article(self.article_title)
-    self.question = f'Guess the which word appears the most in {self.article_title}'
+    self.article = article
 
   def score(self, answer):
     raw_score = wiki.get_article_wordcount(self.article, answer)
