@@ -72,3 +72,21 @@ def test_invalid_answer_submission():
     room.score_round()
 
   assert room.state == 'round'
+
+def test_invalid_article_answer_submission():
+  room = init_round(2)
+  room.setup_round('The Justice League')
+
+  assert room.state == 'round'
+  assert type(room.round) == rounds.MostCommonLinksRound
+
+  try:
+    room.receive_answer('player 1', 'Bamtan')
+    assert False
+  except wiki.NoArticleError as e:
+    assert type(e) == wiki.NoArticleError
+
+  if room.round_complete():
+    room.score_round()
+
+  assert room.state == 'round'

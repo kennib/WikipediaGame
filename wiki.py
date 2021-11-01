@@ -7,6 +7,8 @@ import re
 PLACEHOLDER_ARTICLES =  ['Bernie Sanders', 'Pie', 'Donkey', 'Calculus', 'The Shining (Film)', 'The Beatles', 'Mahogony']
 
 DisambiguationError = wikipedia.exceptions.DisambiguationError
+class NoArticleError(Exception):
+  pass
 
 def get_random_month():
   year = random.randint(2016, 2021)
@@ -30,8 +32,11 @@ def summarise(article):
 
 def get_article(article_title):
   search = wikipedia.search(article_title)
-  article = wikipedia.page(search[0], auto_suggest=False)
-  return article
+  if search:
+    article = wikipedia.page(search[0], auto_suggest=False)
+    return article
+  else:
+    raise NoArticleError(f'Could not find an article for {article_title}')
 
 def get_random_articles():
   response = requests.get('https://en.wikipedia.org/w/api.php', params={'action': 'query', 'list':'mostviewed','pvimoffset': random.randint(0, 1000-10), 'format': 'json'})

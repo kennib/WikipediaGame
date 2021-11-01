@@ -78,6 +78,8 @@ def send_answer(data):
     emit('disambiguation', {'word': data['answer'], 'options': e.options})
   except InvalidAnswerError as e:
     emit('invalid answer', {'answer': data['answer'], 'message': str(e)})
+  except wiki.NoArticleError as e:
+    emit('invalid answer', {'answer': data['answer'], 'message': str(e)})
   
   if room.round_complete():
     room.score_round()
