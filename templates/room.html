@@ -12,8 +12,9 @@
 <script src="/static/enter_name.js"></script>
 <script src="/static/waiting_room.js"></script>
 <script src="/static/round_setup.js"></script>
-<script src="/static/round.js"></script>
+<script src="/static/round_answer.js"></script>
 <script src="/static/round_scores.js"></script>
+<script src="/static/round.js"></script>
 <script src="/static/final_scores.js"></script>
 
 <div id="app">
@@ -30,27 +31,18 @@
     <enter-name v-bind:on-submit="enterName" />
   </div>
   <div v-if="state == 'waiting room'">
-    <waiting-room v-bind:players="players" v-bind:button-event="nextRound"/>
-  </div>
-  <div v-if="state == 'round setup'">
-    <round-setup
+    <waiting-room
+      v-bind:state="state"
       v-bind:room="room"
-      v-bind:player="player"
-      v-bind:round="round"
-    />
+      v-bind:players="players" />
   </div>
-  <div v-if="state == 'round'">
-    <round-answer
+  <div v-if="state == 'round' || state == 'round scores' || state == 'round setup'">
+    <round
+      v-bind:state="state"
       v-bind:room="room"
       v-bind:player="player"
       v-bind:round="round"
       v-bind:sync-time="syncTime"
-     />
-  </div>
-  <div v-if="state == 'round scores'">
-    <round-scores
-      v-bind:round="round"
-      v-bind:button-event="nextRound"
      />
   </div>
   <div v-if="state == 'final scores'">
@@ -134,9 +126,6 @@ var app = new Vue({
       this.state = 'waiting room'
       this.join()
       this.$forceUpdate()
-    },
-    nextRound: function() {
-      socket.emit('next round', { room: this.room, state: this.state, round: this.round.number })
     },
     playAgain: function() {
       socket.emit('play again', { room: this.room })

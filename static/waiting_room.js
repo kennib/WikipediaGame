@@ -1,8 +1,13 @@
 Vue.component('waiting-room', {
-  props: ['players', 'buttonEvent'],
+  props: ['state', 'room', 'players'],
   data() {
     return {
     }
+  },
+  methods: {
+    nextRound: function() {
+      socket.emit('next round', { room: this.room, state: this.state })
+    },
   },
   template: `
   <div>
@@ -10,7 +15,7 @@ Vue.component('waiting-room', {
     <ol>
       <li v-for="player in players" v-text="player"></li>
     </ol>
-    <button v-on:click="buttonEvent">Start Game</button>
+    <button v-on:click="nextRound">Start Game</button>
   </div>
     `
 })
