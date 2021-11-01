@@ -22,7 +22,7 @@ Vue.component('round-scores', {
   template:`
   <section>
     
-    <div v-if="round.question.data.answer">
+    <div v-if="round.question.data.answer.article">
       <h3>Answer</h3>
       <p v-if="round.question.data.answer.article">
         <a v-bind:href="wikiUrl(round.question.data.answer.article)" target="_blank">
@@ -40,6 +40,7 @@ Vue.component('round-scores', {
         </ul>
       </details>
     </div>
+    
     <h3>Scores</h3>
 
     <table>
