@@ -15,7 +15,14 @@ Vue.component('round', {
 
     <section v-if="state == 'round' || state == 'round scores'">
       <h3>Question</h3>
-      <p v-text="round.question.description"></p>
+      {{ round.question.description }}
+      <details v-if="round.question.data.article">
+        <summary>
+          {{ round.question.data.article.title }}
+        </summary>
+        <p>({{ round.question.data.article.summary }})</p>
+      </details>
+
       <p v-if="round.question.data.image">
         <img v-bind:src="round.question.data.image" />
       </p>

@@ -141,3 +141,36 @@ table th {
 .options button {
   margin: 5px;
 }
+
+details,
+summary {
+  display: contents;
+}
+
+/* Safari 10.1+
+   There's a bug that stops summary elements opening
+   with display: contents;
+*/
+@media not all and (min-resolution:.001dpcm)
+{ @supports (-webkit-appearance:none) {
+  details,
+  summary {
+    display: inline;
+  }
+}
+}
+
+details summary::-webkit-details-marker {
+  display:none;
+}
+
+summary {
+  cursor: pointer;
+  color: #36c;
+  text-decoration: underline;
+}
+
+details p {
+  font-style: italic;
+  margin-top: 10px;
+}

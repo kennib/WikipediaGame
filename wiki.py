@@ -24,6 +24,10 @@ def context(word, article):
     if word in words:
       return sentence + '.'
 
+def summarise(article):
+  sentences = re.split('\n|\.', article.summary)
+  return sentences[0] if sentences else ''
+
 def get_article(article_title):
   search = wikipedia.search(article_title)
   article = wikipedia.page(search[0], auto_suggest=False)
