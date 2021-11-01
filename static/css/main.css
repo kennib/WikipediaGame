@@ -174,3 +174,7 @@ details p {
   font-style: italic;
   margin-top: 10px;
 }
+
+ul {
+  margin-right: 15px;
+}

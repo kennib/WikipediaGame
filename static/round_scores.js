@@ -28,10 +28,7 @@ Vue.component('round-scores', {
         <tr>
           <th>Player</th>
           <th>Answer</th>
-          <th>Article</th>
           <th>{{ round.question.data.answer.scoreType }}</th>
-          <th v-if="round.question.data.answer.show_example">Example</th>
-          <th v-if="round.question.data.answer.show_details">Details</th>
           <th>Round Score</th>
           <th>Running Score</th>
         </tr>
@@ -39,11 +36,29 @@ Vue.component('round-scores', {
       <tbody>
         <tr v-for="result in round.results">
           <td>{{ result.player }}</td>
-          <td>{{ result.answer }}</td>
-          <td>{{ result.article }}</td>
-          <td>{{ result.raw_score }}</td>
-          <td v-if="round.question.data.answer.show_example">{{ result.example }}</td>
-          <td v-if="round.question.data.answer.show_details">{{ result.details }}</td>
+          <td>
+            {{ result.answer }}
+            <br/>
+            <a v-if="result.article" 
+              v-bind:href="result.article.url" target="_blank">
+              {{ result.article.title }}
+            </a>
+          </td>
+          <td>
+            <details>
+              <summary>
+                {{ result.score.toLocaleString() }} {{ round.question.data.answer.units }}
+              </summary>
+              <ul v-if="round.question.data.answer.units == 'links'">
+                <li v-for="article in result.details">
+                  <a v-bind:href="'https://en.wikipedia.org/wiki/'+article" target="_blank">
+                    {{ article }}
+                  </a>
+                </li>
+              </ul>
+              <p v-else>{{ result.details }}</p>
+            </details>
+          </td>
           <td>{{ result.normalised_score }}</td>
           <td>{{ result.running_score }} </td>
         </tr>

@@ -63,15 +63,24 @@ class Room():
       self.round.validate_answer(answer) # Will raise an exception if the answer is invalid
 
       score = self.round.score(answer)
-      print(type(score))
-      print(f'{score.article_title} {score.raw_score}')
-      self.results[player]['article'] = score.article_title
-      self.results[player]['raw_score'] = score.raw_score
-      self.results[player]['example'] = score.example
-      self.results[player]['details'] = score.details
+      
+      self.results[player] = {
+        'player': player,
+        'answer': answer,
+        'article': {
+          'title': score.article.title,
+          'url': score.article.url,
+        },
+        'raw_score': score.raw_score,
+        'score': score.display_score or score.raw_score,
+        'details': score.details,
+      }
     else:
-      self.results[player]['article'] = None
-      self.results[player]['raw_score'] = 0
+      self.results[player] = {
+        'player': player,
+        'raw_score': 0,
+        'score': '-',
+      }
 
   def round_complete(self):
     submissions = [result for result in self.results.values() if result.get('raw_score') != None]

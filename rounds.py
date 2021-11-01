@@ -6,12 +6,11 @@ class InvalidAnswerError(Exception):
   pass
 
 class Score():
-  def __init__(self, article_title, raw_score):
-    self.article_title = article_title
+  def __init__(self, article_title, raw_score, display_score=None, details=None):
+    self.article = wiki.get_article(article_title)
     self.raw_score = raw_score
-    #TODO possibly only need details?
-    self.example = None 
-    self.details = None
+    self.display_score = display_score
+    self.details = details
 
 class Round():
   def __init__(self):
@@ -42,6 +41,7 @@ class HighestWordCountRound(Round):
     self.data = {
       'answer': {
         'scoreType': 'Word count',
+        'units': self.word,
       }
     }
 
@@ -51,8 +51,7 @@ class HighestWordCountRound(Round):
     score = Score(article.title, raw_score)
     if raw_score:
       context = wiki.context(self.word, article)
-      self.data['answer']['show_example'] = True 
-      score.example = context
+      score.details = context
     return score
 
 class MostCommonLinksRound(Round):
@@ -63,7 +62,8 @@ class MostCommonLinksRound(Round):
     self.invalid_words = []
     self.data = {
       'answer': {
-        'scoreType': 'Link count'
+        'scoreType': 'Link count',
+        'units': 'links',
       }
     }
 
@@ -78,8 +78,10 @@ class MostCommonLinksRound(Round):
     self.invalid_words = article_title.split()
 
   def score(self, answer):
-    article_title, raw_score =  wiki.get_common_links(self.article_title, answer)
-    return Score(article_title, raw_score)
+    article_title, raw_score, links =  wiki.get_common_links(self.article_title, answer)
+    score = Score(article_title, raw_score)
+    score.details = links
+    return score
 
 class MostViewsRound(Round):
   def __init__(self):
@@ -90,16 +92,21 @@ class MostViewsRound(Round):
     self.question = f'Find the most popular article for {self.month}/{self.year} which contains {self.word}'
     self.data = {
       'answer': {
-        'scoreType': 'View count'
+        'scoreType': 'View count',
+        'units': 'views',
       }
     }
 
   def score(self, answer):
     article = wiki.get_article(answer)
     views = wiki.get_pageviews(article.title.replace(' ', '_'), (self.year, self.month))
-    raw_score = views if self.word in article.content else 0
-    self.data['answer']['wordAppears'] = ''
-    return Score(article.title, raw_score)
+    word_in_article = self.word.lower() in article.content.lower().split()
+    raw_score = views if word_in_article else 0
+    display_score = views
+    details = f'{views:,} views and {self.word} {"does" if word_in_article else "does not"} appear in the article'
+
+    score = Score(article.title, raw_score, display_score, details)
+    return score
 
 class ImageRound(Round):
   def __init__(self):
@@ -112,29 +119,28 @@ class ImageRound(Round):
       'answer': {
         'article': self.article.title,
         'articles': self.articles,
-        'scoreType': 'Raw score'
+        'scoreType': 'Results'
       }
     }
     self.invalid_words = []
   
   def score(self, answer):
     article = wiki.get_article(answer)
-    details = ''
-    self.data['answer']['show_details'] = True 
+    
     if article.title in self.articles:
-      raw_score = 1
-      details = 'Selected article contains the image'
+      display_score, raw_score = 'Correct article', 10
+      details = 'Your article contains the image'
     elif set(article.links) & set(self.articles):
-      raw_score = 0.75
-      details = 'Selected article links to article containing the image'
+      display_score, raw_score = 'Links to article', 7
+      details = 'Your article links to the article containing the image'
     elif article.title in self.article.links:
-      raw_score = 0.5
-      details = 'Selected article is linked to by article containing the image'
+      display_score, raw_score = 'Linked from article', 5
+      details = 'Your article is linked to by the article containing the image'
     else:
-      raw_score = 0
-      details = 'Selected article does not contain the image'
-    score = Score(article.title, raw_score)
-    score.details = details 
+      display_score, raw_score = 'Incorrect article', 0
+      details = 'Your article does not contain the image'
+
+    score = Score(article.title, raw_score, display_score, details)
     return score
 
 class MostFrequentWordRound(Round):
@@ -144,7 +150,8 @@ class MostFrequentWordRound(Round):
     self.question = 'Guess the most common word in the article for '
     self.data = {
       'answer': {
-        'scoreType': 'Word count'
+        'scoreType': 'Word count',
+        'units': 'words',
       }
     }
   
@@ -165,8 +172,7 @@ class MostFrequentWordRound(Round):
     score = Score(self.article.title, raw_score)
     if raw_score:
       context = wiki.context(answer, self.article)
-      self.data['answer']['show_example'] = True 
-      score.example = context
+      score.details = context
     return score
   
   def validate_answer(self, answer):
@@ -178,9 +184,9 @@ class MostFrequentWordRound(Round):
       return True
 
 ROUNDS = [
-  HighestWordCountRound,
-  MostCommonLinksRound,
-  ImageRound,
-  MostFrequentWordRound,
+  #HighestWordCountRound,
+  #MostCommonLinksRound,
+  #ImageRound,
+  #MostFrequentWordRound,
   MostViewsRound
 ]
