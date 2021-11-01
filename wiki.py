@@ -52,19 +52,21 @@ def get_random_image():
     article_title = random.choice(PLACEHOLDER_ARTICLES)
   article = get_article(article_title)
 
-  image = None
-  while image == None:
-    response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'generator': 'images', 'prop': 'imageinfo', 'titles': article_title, 'iiprop': 'url|dimensions', 'format': 'json'})
+  response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'generator': 'images', 'prop': 'imageinfo', 'titles': article_title, 'iiprop': 'url|dimensions', 'format': 'json'})
 
-    images = response.json().get('query', {}).get('pages', {}).values()
-    content_images = [image for image in images if image['imagerepository'] != 'local']
+  images = response.json().get('query', {}).get('pages', {}).values()
+  content_images = [image for image in images if image['imagerepository'] != 'local']
 
-    if content_images:
-      image = random.choice(content_images)
-    else:
-      image = None
+  if content_images:
+    image = random.choice(content_images)
+    image_title = image['title']
+    image_url = image['imageinfo'][0]['url']
+  else:
+    image = 'whatever'
+    image_title = 'none'
+    image_url = 'no image'
 
-  return image['title'], image['imageinfo'][0]['url'], article
+  return image_title, image_url, article
 
 def get_pages_containing_image(image_title):
   response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'list':'imageusage', 'iutitle': image_title, 'iulimit': 500, 'format': 'json'})
