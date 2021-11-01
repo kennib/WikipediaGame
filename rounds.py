@@ -184,9 +184,9 @@ class MostFrequentWordRound(Round):
       return True
 
 ROUNDS = [
-  #HighestWordCountRound,
-  #MostCommonLinksRound,
-  #ImageRound,
-  #MostFrequentWordRound,
+  HighestWordCountRound,
+  MostCommonLinksRound,
+  ImageRound,
+  MostFrequentWordRound,
   MostViewsRound
 ]
