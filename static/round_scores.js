@@ -15,21 +15,33 @@ Vue.component('round-scores', {
     nextRound: function() {
       socket.emit('next round', { room: this.room, state: this.state, round: this.round.number })
     },
+    wikiUrl: function(article) {
+      return 'https://en.wikipedia.org/wiki/'+article
+    }
   },
   template:`
   <section>
-    <h3>Scores</h3>
     
     <div v-if="round.question.data.answer">
-      <h4 v-if="round.question.data.answer.article">
-        Article: 
-        <span v-text="round.question.data.answer.article"></span>
-      </h4>
-      <h4 v-if="round.question.data.answer.articles">
-        Answer:
-        <span v-for="article in round.question.data.answer.articles">{{article}} </span>
-      </h4>
+      <h3>Answer</h3>
+      <p v-if="round.question.data.answer.article">
+        <a v-bind:href="wikiUrl(round.question.data.answer.article)" target="_blank">
+          {{ round.question.data.answer.article }}
+        </a>
+      </p>
+      <details v-if="round.question.data.answer.articles">
+        <summary>
+          and {{ round.question.data.answer.articles.length-1 }} other articles
+        </summary>
+        <ul>
+          <li v-for="article in round.question.data.answer.articles">
+            <a v-bind:href="wikiUrl(article)" target="_blank">{{article}}</a>
+          </li>
+        </ul>
+      </details>
     </div>
+    <h3>Scores</h3>
+
     <table>
       <thead>
         <tr>
@@ -58,7 +70,7 @@ Vue.component('round-scores', {
               </summary>
               <ul v-if="round.question.data.answer.units == 'links'">
                 <li v-for="article in result.details">
-                  <a v-bind:href="'https://en.wikipedia.org/wiki/'+article" target="_blank">
+                  <a v-bind:href="wikiUrl(article)" target="_blank">
                     {{ article }}
                   </a>
                 </li>

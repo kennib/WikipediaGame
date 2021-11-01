@@ -132,10 +132,10 @@ class ImageRound(Round):
       details = 'Your article contains the image'
     elif set(article.links) & set(self.articles):
       display_score, raw_score = 'Links to article', 7
-      details = 'Your article links to the article containing the image'
+      details = 'Your article links to an article containing the image'
     elif article.title in self.article.links:
       display_score, raw_score = 'Linked from article', 5
-      details = 'Your article is linked to by the article containing the image'
+      details = 'Your article is linked to by an article containing the image'
     else:
       display_score, raw_score = 'Incorrect article', 0
       details = 'Your article does not contain the image'
