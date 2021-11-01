@@ -104,7 +104,7 @@ class Room():
       self.results[player]['running_score'] = self.final_results[player]['score']
 
   def round_results(self):
-    results = [self.results[player] for player in self.players]
+    results = [self.results.get(player, {}) for player in self.players]
     return sorted(results, key=lambda result: result.get('normalised_score', 0), reverse=True)
 
   def current_state(self, player=None):
