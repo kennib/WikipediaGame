@@ -73,7 +73,7 @@ def get_pages_containing_image(image_title):
 
   try:
     image_usages = response.json().get('query').get('imageusage')
-    linked_pages = [page.get('title') for page in image_usages]
+    linked_pages = [page.get('title') for page in image_usages if ':' not in page.get('title')]
   except (KeyError, IndexError):
     linked_pages = []
 
