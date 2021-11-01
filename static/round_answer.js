@@ -6,6 +6,20 @@ Vue.component('round-answer', {
       answerState: 'need answer',
     }
   },
+  beforeCreate: function() {
+    let vm = this
+    socket.on('disambiguation', function(disambiguation) {
+      vm.round.submitted = false
+      console.log(disambiguation)
+      vm.round.disambiguation = disambiguation
+    })
+    socket.on('invalid answer', function(invalidAnswer) {
+      vm.round.submitted = false
+      console.log(invalidAnswer)
+      vm.round.invalidAnswer = invalidAnswer.message
+      vm.answerState = 'need answer'
+    })
+  },
   methods: {
     submitAnswer: function() {
       if (this.answer) {
@@ -14,6 +28,7 @@ Vue.component('round-answer', {
       }
     },
     chooseAnswer: function(option) {
+      this.disambiguation = undefined
       this.answer = option
       this.submitAnswer()
     },

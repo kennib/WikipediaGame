@@ -2,6 +2,8 @@
   display: flex;
   flex-wrap: nowrap;
 
+  margin: 10px 0px;
+
   background-color: darkgrey;
   border-color: #36c;
 }

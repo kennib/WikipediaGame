@@ -85,16 +85,6 @@ var app = new Vue({
       console.log(players)
       vm.players = players
     })
-    socket.on('disambiguation', function(disambiguation) {
-      vm.round.submitted = false
-      console.log(disambiguation)
-      vm.round.disambiguation = disambiguation
-    })
-    socket.on('invalid answer', function(invalidAnswer) {
-      vm.round.submitted = false
-      console.log(invalidAnswer)
-      vm.round.invalidAnswer = invalidAnswer.message
-    })
     socket.on('update state', function(data) {
       console.log(data)
       for (let key in data) {
