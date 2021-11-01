@@ -36,8 +36,6 @@ class Room():
     if self.state == 'waiting room':
       self.round_number = 0
 
-    print('CURRENT ROUND', self.round_number, self.state)
-
     self.results = {}
     if self.round_number < len(ROUNDS):
       self.round_number += 1
@@ -50,8 +48,6 @@ class Room():
         self.finish_time = int(time()) + self.round_time
     else:
       self.state = 'final scores'
-
-    print('CURRENT ROUND', self.round_number, self.state)
       
   def receive_answer(self, player, answer):
     self.results[player] = {
@@ -161,7 +157,6 @@ class Room():
     return current_state
 
   def setup_round(self, article_title):
-    print('setup_round')
     self.round.setup(article_title)
     self.finish_time = int(time()) + self.round_time
     self.state = 'round'

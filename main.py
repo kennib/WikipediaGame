@@ -52,14 +52,10 @@ def next_round(data):
   
   if data['state'] == room.state and room.state == 'waiting room' or data['round'] == room.round_number:
     room.next_round()
-    print('update state', room.current_state())
     emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
-
-    print('round begin')
 
     this_round = room.round
     socketio.sleep(room.round_time)
-    print('round end')
 
     if room.state == 'round' and room.round == this_round:
       room.score_round()
