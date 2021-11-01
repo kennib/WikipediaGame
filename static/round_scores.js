@@ -1,3 +1,10 @@
+Vue.filter('formatNumber', function (value) {
+  if (isNaN(value))
+    return value
+  else
+    return value.toLocaleString()
+});
+
 Vue.component('round-scores', {
   props: ['state', 'room', 'round'],
   data() {
@@ -47,7 +54,7 @@ Vue.component('round-scores', {
           <td>
             <details>
               <summary>
-                {{ result.score.toLocaleString() }} {{ round.question.data.answer.units }}
+                {{ result.score | formatNumber }} {{ round.question.data.answer.units }}
               </summary>
               <ul v-if="round.question.data.answer.units == 'links'">
                 <li v-for="article in result.details">
