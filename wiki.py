@@ -3,6 +3,9 @@ import random
 import requests
 import re
 
+# Articles if the most popular articles API is not working
+PLACEHOLDER_ARTICLES =  ['Bernie Sanders', 'Pie', 'Donkey', 'Calculus', 'The Shining (Film)', 'The Beatles', 'Mahogony']
+
 DisambiguationError = wikipedia.exceptions.DisambiguationError
 
 def get_random_month():
@@ -29,12 +32,20 @@ def get_article(article_title):
 def get_random_articles():
   response = requests.get('https://en.wikipedia.org/w/api.php', params={'action': 'query', 'list':'mostviewed','pvimoffset': random.randint(0, 1000-10), 'format': 'json'})
   articles = [article['title'] for article in response.json()['query']['mostviewed']]
-  return articles
+
+  if articles:
+    return articles
+  else:
+    return PLACEHOLDER_ARTICLES
 
 def get_random_image():
   response = requests.get('https://en.wikipedia.org/w/api.php', params={'action': 'query', 'list':'mostviewed', 'pvimoffset': random.randint(0, 1000), 'pvlimit': 1, 'format': 'json'})
 
-  article_title = response.json()['query']['mostviewed'][0]['title']
+  most_viewed = response.json()['query']['mostviewed']
+  if most_viewed:
+    article_title = most_viewed[0]['title']
+  else:
+    article_title = random.choice(PLACEHOLDER_ARTICLES)
   article = get_article(article_title)
 
   image = None
