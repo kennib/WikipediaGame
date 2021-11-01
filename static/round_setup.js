@@ -15,14 +15,7 @@ Vue.component('round-setup', {
     },
   },
   template: `
-  <div>
-    <h2>
-      {{ round.title }}
-      <small>
-        Round {{ round.number }}
-      </small>
-    </h2>
-    
+  <section>
     <h3>Choose an article</h3>
 
     <div v-if="round.playerChoice.player == player">
@@ -36,6 +29,6 @@ Vue.component('round-setup', {
     <div v-else>
       {{ round.playerChoice.player }} is choosing an article
     </div>
-  </div>
+  </section>
   `
 })

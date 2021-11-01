@@ -1,24 +1,18 @@
 Vue.component('round-scores', {
-  props: ['round', 'buttonEvent'],
+  props: ['state', 'room', 'round'],
   data() {
     return {
     }
   },
+  methods: {
+    nextRound: function() {
+      socket.emit('next round', { room: this.room, state: this.state, round: this.round.number })
+    },
+  },
   template:`
-  <div>
-    <h2>
-      {{ round.title }}
-      <small>
-        Round {{ round.number }}
-      </small>
-    </h2>
-
+  <section>
     <h3>Scores</h3>
     
-    <p v-text="round.question.description"></p>
-    <p v-if="round.question.data.image">
-      <img v-bind:src="round.question.data.image" />
-    </p>
     <div v-if="round.question.data.answer">
       <h4 v-if="round.question.data.answer.article">
         Article: 
@@ -55,7 +49,7 @@ Vue.component('round-scores', {
         </tr>
       </tbody>
     </table>
-    <button v-on:click="buttonEvent">Next Round</button>
-  </div>
+    <button v-on:click="nextRound">Next Round</button>
+  </section>
   `
 })
