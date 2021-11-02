@@ -5,7 +5,7 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
-python = "3.8.1"
+python = "3.8.12"
 wikipedia = "^1.4.0"
 Random-Word = "^1.0.7"
 Flask = "^2.0.1"
