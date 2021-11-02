@@ -11,6 +11,8 @@ Random-Word = "^1.0.7"
 Flask = "^2.0.1"
 Flask-SocketIO = "^5.1.1"
 pytest = "^6.2.5"
+eventlet = "^0.32.0"
+gevent-websocket = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
 
