@@ -22,8 +22,8 @@ def get_random_word():
 
 def context(word, article):
   for sentence in re.split('\n|\.', article.content):
-    words = re.sub('[^\w\d\s]', '', sentence).split()
-    if word in words:
+    words = map(str.lower, re.sub('[^\w\d\s]', '', sentence).split())
+    if word.lower() in words:
       return sentence + '.'
 
 def summarise(article):
