@@ -50,7 +50,7 @@ Vue.component('round-scores', {
           <th>Answer</th>
           <th>{{ round.question.data.answer.scoreType }}</th>
           <th>Round Score</th>
-          <th>Running Score</th>
+          <th v-if="!round.final">Running Score</th>
         </tr>
       </thead>
       <tbody>
@@ -80,11 +80,13 @@ Vue.component('round-scores', {
             </details>
           </td>
           <td>{{ result.normalised_score }}</td>
-          <td>{{ result.running_score }} </td>
+          <td v-if="!round.final">{{ result.running_score }} </td>
         </tr>
       </tbody>
     </table>
-    <button v-on:click="nextRound">Next Round</button>
+    <button v-on:click="nextRound">
+      {{ round.final ? 'Final Scores' : 'Next Round' }}
+    </button>
   </section>
   `
 })

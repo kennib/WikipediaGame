@@ -26,6 +26,8 @@ class Room():
     self.round_time = round_time
     self.round = None
 
+    self.rounds = ROUNDS
+
     self.final_results = {}
 
   def add_player(self, player):
@@ -37,9 +39,9 @@ class Room():
       self.round_number = 0
 
     self.results = {}
-    if self.round_number < len(ROUNDS):
+    if self.round_number < len(self.rounds):
       self.round_number += 1
-      self.round = ROUNDS[self.round_number - 1]()
+      self.round = self.rounds[self.round_number - 1]()
       if hasattr(self.round, 'setup'):
         self.state = 'round setup'
         self.player_choice = {'player': random.choice(list(self.players)), 'options':  wiki.get_random_articles()}
@@ -124,11 +126,13 @@ class Room():
         'playerChoice': self.player_choice,
         'title': self.round.title,
         'number': self.round_number,
+         'final': self.round_number == len(self.rounds),
       }
     elif self.state == 'round':
       current_state['round'] = {
         'title': self.round.title,
         'number': self.round_number,
+        'final': self.round_number == len(self.rounds),
         'time': self.round_time,
         'finishTime': self.finish_time,
         'question': {
@@ -145,6 +149,7 @@ class Room():
       current_state['round'] = {
         'title': self.round.title,
         'number': self.round_number,
+        'final': self.round_number == len(self.rounds),
         'question': {
           'description': self.round.question,
           'data': self.round.data
