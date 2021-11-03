@@ -4,6 +4,8 @@ Vue.component('timer', {
     return {
       enabled: true,
       time: this.startTime || this.duration,
+      start: new Date().valueOf()/1000 + (this.startTime || 0) - (this.duration || 0),
+      end: new Date().valueOf()/1000 + (this.startTime || 0),
     }
   },
   methods: {
@@ -15,7 +17,7 @@ Vue.component('timer', {
     enabled(value) {
       if (value) {
         setTimeout(() => {
-          this.time--
+          this.time = Math.floor(this.end - new Date().valueOf()/1000)
         }, 1000);
       }
     },
@@ -23,7 +25,7 @@ Vue.component('timer', {
       handler(value) {
         if (value > 0 && this.enabled) {
           setTimeout(() => {
-            this.time--
+            this.time = Math.floor(this.end - new Date().valueOf()/1000)
           }, 1000);
         }
       },

@@ -12,7 +12,6 @@
 * Improvements
   * fix scoring
     * Score duplicate answers lower)
-  * Fix timer so that it actually shows the correct time
   * Add a list of most common article words on round 4 answer screen
   * Article context: get full sentences
   * test/fix examples in scoring
