@@ -17,3 +17,11 @@
   * Add a list of most common article words on round 4 answer screen
   * Article context: get full sentences
   * test/fix examples in scoring
+  * Fix image round when an image can't be found
+  * Add details to image round score description
+  * Scoring details for most popular article round (word not in article)
+  * Make names case insensitive
+  * Add user removal
+  * Add errors to the logs
+  * most common words round: don't show article title in scoring
+  * Make multiple words invalid for most common word round
