@@ -24,7 +24,7 @@ class Round():
     raise Exception('Not implemented')
 
   def validate_answer(self, answer):
-    answer_words = answer.strip().split()
+    answer_words = answer.lower().strip().split()
 
     if set(answer_words) & set(self.invalid_words) \
       or any(word in invalid or invalid in word for invalid in self.invalid_words for word in answer_words):
@@ -183,7 +183,7 @@ class MostFrequentWordRound(Round):
     return score
   
   def validate_answer(self, answer):
-    answer = answer.strip()
+    answer = answer.lower().strip()
     
     if answer in STOPWORDS:
       raise InvalidAnswerError('Your word is too common, try a little harder!')
