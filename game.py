@@ -73,7 +73,7 @@ class Room():
         self.results[player]['article'] = {
           'title': score.article.title,
           'url': score.article.url,
-        },
+        }
     else:
       self.results[player] = {
         'player': player,
