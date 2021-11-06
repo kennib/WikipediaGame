@@ -65,14 +65,15 @@ class Room():
       self.results[player] = {
         'player': player,
         'answer': answer,
-        'article': {
-          'title': score.article.title,
-          'url': score.article.url,
-        },
         'raw_score': score.raw_score,
         'score': score.display_score or score.raw_score,
         'details': score.details,
       }
+      if score.article:
+        self.results[player]['article'] = {
+          'title': score.article.title,
+          'url': score.article.url,
+        },
     else:
       self.results[player] = {
         'player': player,

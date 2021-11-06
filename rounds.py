@@ -7,7 +7,10 @@ class InvalidAnswerError(Exception):
 
 class Score():
   def __init__(self, article_title, raw_score, display_score=None, details=None):
-    self.article = wiki.get_article(article_title)
+    if article_title:
+      self.article = wiki.get_article(article_title)
+    else:
+      self.article = None
     self.raw_score = raw_score
     self.display_score = display_score
     self.details = details
