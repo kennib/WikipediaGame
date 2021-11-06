@@ -40,7 +40,7 @@ class HighestWordCountRound(Round):
     self.title = 'Article word count round'
     self.word = wiki.get_random_word()
     self.invalid_words = [self.word.lower()]
-    self.question = f'Which page has the most {self.word}?'
+    self.question = f'Which article has the highest count of the word {self.word}?'
     self.data = {
       'answer': {
         'scoreType': 'Word count',
