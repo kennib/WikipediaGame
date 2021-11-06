@@ -36,7 +36,7 @@ class HighestWordCountRound(Round):
   def __init__(self):
     self.title = 'Article word count round'
     self.word = wiki.get_random_word()
-    self.invalid_words = [self.word]
+    self.invalid_words = [self.word.lower()]
     self.question = f'Which page has the most {self.word}?'
     self.data = {
       'answer': {
@@ -75,7 +75,7 @@ class MostCommonLinksRound(Round):
       'url': article.url,
     }
     self.article_title = article_title
-    self.invalid_words = article_title.split()
+    self.invalid_words = article_title.lower().split()
 
   def score(self, answer):
     article_title, raw_score, links =  wiki.get_common_links(self.article_title, answer)
@@ -88,7 +88,7 @@ class MostViewsRound(Round):
     self.title = 'Most popular article round'
     self.year, self.month = wiki.get_random_month()
     self.word = wiki.get_random_word()
-    self.invalid_words = [self.word]
+    self.invalid_words = [self.word.lower()]
     self.question = f'Find the most popular article for {self.month}/{self.year} which contains {self.word}'
     self.data = {
       'answer': {
@@ -161,6 +161,7 @@ class MostFrequentWordRound(Round):
         'units': 'words',
       }
     }
+    self.invalid_words = []
   
   def setup(self, article_title):
     article = wiki.get_article(article_title)
@@ -171,12 +172,13 @@ class MostFrequentWordRound(Round):
     }
     self.article_title = article_title
     self.article = article
+    self.invalid_words = article_title.lower().split()
 
   def score(self, answer):
     raw_score = wiki.get_article_wordcount(self.article, answer)
     if raw_score:
       self.data['answer']['article word count'] = raw_score
-    score = Score(self.article.title, raw_score)
+    score = Score(None, raw_score)
     if raw_score:
       context = wiki.context(answer, self.article)
       score.details = context
@@ -188,7 +190,7 @@ class MostFrequentWordRound(Round):
     if answer in STOPWORDS:
       raise InvalidAnswerError('Your word is too common, try a little harder!')
     else:
-      return True
+      return super().validate_answer(answer)
 
 ROUNDS = [
   HighestWordCountRound,
