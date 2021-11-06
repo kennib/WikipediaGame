@@ -9,6 +9,8 @@ PLACEHOLDER_ARTICLES =  ['Bernie Sanders', 'Pie', 'Donkey', 'Calculus', 'The Shi
 DisambiguationError = wikipedia.exceptions.DisambiguationError
 class NoArticleError(Exception):
   pass
+class NoImageError(Exception):
+  pass
 
 def get_random_month():
   year = random.randint(2016, 2021)
@@ -57,19 +59,17 @@ def get_random_image():
     article_title = random.choice(PLACEHOLDER_ARTICLES)
   article = get_article(article_title)
 
-  response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'generator': 'images', 'prop': 'imageinfo', 'titles': article_title, 'iiprop': 'url|dimensions', 'format': 'json'})
+  response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'generator': 'images', 'prop': 'imageinfo', 'titles': article.title, 'iiprop': 'url|dimensions', 'format': 'json'})
 
   images = response.json().get('query', {}).get('pages', {}).values()
-  content_images = [image for image in images if image['imagerepository'] != 'local']
+  content_images = [image for image in images if image['imagerepository'] != 'local' and image['imageinfo'][0]['height'] > 100]
 
   if content_images:
     image = random.choice(content_images)
     image_title = image['title']
     image_url = image['imageinfo'][0]['url']
   else:
-    image = 'whatever'
-    image_title = 'none'
-    image_url = 'no image'
+    raise NoImageError(f'Cannot find any images on the {article_title} page')
 
   return image_title, image_url, article
 

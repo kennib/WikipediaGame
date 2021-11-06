@@ -111,7 +111,14 @@ class MostViewsRound(Round):
 class ImageRound(Round):
   def __init__(self):
     self.title = 'The image round'
-    self.image, image_url, self.article = wiki.get_random_image()
+    
+    image_url = None
+    while not image_url:
+      try:
+        self.image, image_url, self.article = wiki.get_random_image()
+      except wiki.NoImageError:
+        pass
+    
     self.articles = wiki.get_pages_containing_image(self.image)
     self.question = f'Find an article containing the following image'
     self.data = {
