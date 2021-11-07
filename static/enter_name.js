@@ -8,10 +8,16 @@ Vue.component('enter-name', {
   template: `
   <div>
     <h3>Enter your name</h3>
-    <input v-model="player" v-on:keyup.enter="onSubmit(player)" />
-    <input type="submit" 
-      v-on:click="onSubmit(player)"
-      v-bind:disabled="!player"
-     />
+    <form v-on:submit.prevent>
+      <p>
+        <label for="name">Player Name</label>
+        <input v-model="player" name="name"
+        v-on:keyup.enter="onSubmit(player)" />
+      </p>
+      <input type="submit" 
+        v-on:click="onSubmit(player)"
+        v-bind:disabled="!player"
+      />
+    </form>
   </div>`
 })

@@ -68,9 +68,14 @@ var app = new Vue({
     vm.room = path[path.length-1]
 
     let cookies = document.cookie.split('; ')
-    let playerCookie = cookies.find(function(row) { return row.startsWith('player=') })
+    let playerCookie = cookies.find(function(row) {
+      return row.startsWith('player=')
+    })
 
-    vm.player = playerCookie.split('=')[1];
+    if (playerCookie) {
+      vm.player = playerCookie.split('=')[1]
+    }
+    
     
     if (!vm.player) {
       vm.state = 'enter name'
@@ -108,9 +113,7 @@ var app = new Vue({
       }
     },
     enterName: function(player) {
-      let url = new URL(window.location.href)
-      url.searchParams.set('name', player)
-      history.replaceState(null, null, "?"+url.searchParams.toString())
+      document.cookie += 'player='+player+';'
 
       this.player = player
       this.state = 'waiting room'

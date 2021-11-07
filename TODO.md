@@ -23,4 +23,3 @@
 * Bugs
   * Waiting for players list is incorrect when disambiguation happens
   * Invalid article choices in disambiguation mode do not show any feedback
-  * Cannot load rooms from a URL
