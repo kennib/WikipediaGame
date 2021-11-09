@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, send_from_directory, redirect, make_response
 from flask_socketio import SocketIO, emit, join_room
+
 import wiki
 from game import Room, generate_room_code
 from rounds import InvalidAnswerError
+
+from analytics import record_game_start, record_game_completed, get_stats
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -12,6 +15,11 @@ rooms = {}
 @app.route('/')
 def home():
   return render_template('home.html')
+
+@app.route('/stats')
+def stats():
+  stats = get_stats()
+  return render_template('stats.html', **stats)
 
 @app.route('/room', methods=['GET'])
 def join_a_room():
@@ -51,8 +59,14 @@ def next_round(data):
   room = rooms[room_code]
   
   if data['state'] == room.state and room.state == 'waiting room' or data['round'] == room.round_number:
+    if room.state == 'waiting room':
+      record_game_start(len(room.players))
+    
     room.next_round()
     emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
+
+    if room.state == 'final scores':
+      record_game_completed(len(room.players))
 
     this_round = room.round
     socketio.sleep(room.round_time)
