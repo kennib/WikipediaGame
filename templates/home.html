@@ -1,12 +1,7 @@
-<meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
 
-<link rel="stylesheet" href="/static/css/main.css">
-
+{% block content %}
 <main>
-  <header>
-    <h1>Pickapedia</h1>
-  </header>
-  
   <p>
     Pick the wikipedia article to answer the questions and compete with your friends!
   </p>
@@ -35,3 +30,4 @@
     <input type="submit">
   </form>
 </main>
+{% endblock %}

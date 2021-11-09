@@ -1,7 +1,9 @@
-<meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
 
-<link rel="stylesheet" href="/static/css/main.css">
+{% block title %}room {{ room }}{% endblock %}
+{% block header %}{% endblock %}
 
+{% block content %}
 <script src="/static/lib/mergeDeep.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -17,41 +19,43 @@
 <script src="/static/round.js"></script>
 <script src="/static/final_scores.js"></script>
 
-<main id="app">
+<div id="app">
   <header>
     <h1>Pickapedia</h1>
-    <span class="player">{{ player }}</span>
-    <span class="room">{{ room }}</span>
+    <span class="player" v-text="player"></span>
+    <span class="room" v-text="room"></span>
   </header>
-  
-  <div v-if="state == 'loading'">
-    Loading...
-  </div>
-  <div v-if="state == 'enter name'">
-    <enter-name v-bind:on-submit="enterName" />
-  </div>
-  <div v-if="state == 'waiting room'">
-    <waiting-room
-      v-bind:state="state"
-      v-bind:room="room"
-      v-bind:players="players" />
-  </div>
-  <div v-if="state == 'round' || state == 'round scores' || state == 'round setup'">
-    <round
-      v-bind:state="state"
-      v-bind:room="room"
-      v-bind:player="player"
-      v-bind:round="round"
-      v-bind:sync-time="syncTime"
-     />
-  </div>
-  <div v-if="state == 'final scores'">
-    <final-scores
-      v-bind:results="results"
-      v-bind:button-event="playAgain"
-    >
-  </div>
-</main>
+
+  <main>
+    <div v-if="state == 'loading'">
+      Loading...
+    </div>
+    <div v-if="state == 'enter name'">
+      <enter-name v-bind:on-submit="enterName" />
+    </div>
+    <div v-if="state == 'waiting room'">
+      <waiting-room
+        v-bind:state="state"
+        v-bind:room="room"
+        v-bind:players="players" />
+    </div>
+    <div v-if="state == 'round' || state == 'round scores' || state == 'round setup'">
+      <round
+        v-bind:state="state"
+        v-bind:room="room"
+        v-bind:player="player"
+        v-bind:round="round"
+        v-bind:sync-time="syncTime"
+      />
+    </div>
+    <div v-if="state == 'final scores'">
+      <final-scores
+        v-bind:results="results"
+        v-bind:button-event="playAgain"
+      >
+    </div>
+  </main>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
@@ -154,13 +158,10 @@ var app = new Vue({
 })
 </script>
 
-
-<script type="text/javascript" charset="utf-8">
-</script>
-
 <style>
   img {
     height: 40vh;
     width: auto;
   }
 </style>
+{% endblock %}

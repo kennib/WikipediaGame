@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_from_directory, redirect, make_response
+from flask import Flask, render_template, request, redirect, make_response
 from flask_socketio import SocketIO, emit, join_room
 
 import wiki
@@ -38,7 +38,7 @@ def join_a_room():
 
 @app.route('/room/<room_code>', methods=['GET'])
 def room(room_code):
-  return send_from_directory('templates', 'room.html')
+  return render_template('room.html', room=room_code)
 
 @socketio.on('join')
 def join(data):

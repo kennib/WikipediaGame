@@ -1,15 +1,13 @@
-<meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
 
-<link rel="stylesheet" href="/static/css/main.css">
+{% block title %}stats{% endblock %}
 
+{% block content %}
 <main>
-  <header>
-    <h1>Pickapedia</h1>
-  </header>
-
   <h2>Stats</h2>
 
   <p>Current games: {{ live_games }}</p>
   <p>Games played: {{ games_played }}</p>
   <p>Player games played: {{ player_games_played }}</p>
 </main>
+{% endblock %}
