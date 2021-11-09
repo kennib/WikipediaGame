@@ -5,8 +5,10 @@ STOPWORDS = open('data/stopwords.txt').read().splitlines()
 class InvalidAnswerError(Exception):
   pass
 
-class Score():
+class Score(object):
   def __init__(self, article_title, raw_score, display_score=None, details=None):
+    self.__dict__ = self
+
     if article_title:
       self.article = wiki.get_article(article_title)
     else:
@@ -15,8 +17,10 @@ class Score():
     self.display_score = display_score
     self.details = details
 
-class Round():
+class Round(dict):
   def __init__(self):
+    self.__dict__ = self
+
     self.title = ''
     self.article = None
     self.question = ''
@@ -37,6 +41,7 @@ class Round():
 
 class HighestWordCountRound(Round):
   def __init__(self):
+    super().__init__()
     self.title = 'Article word count round'
     self.word = wiki.get_random_word()
     self.invalid_words = [self.word.lower()]
@@ -59,6 +64,7 @@ class HighestWordCountRound(Round):
 
 class MostCommonLinksRound(Round):
   def __init__(self):
+    super().__init__()
     self.title = 'Most common links round'
     self.article_title = ''
     self.question = 'Find the article with the most common links with '
@@ -88,6 +94,7 @@ class MostCommonLinksRound(Round):
 
 class MostViewsRound(Round):
   def __init__(self):
+    super().__init__()
     self.title = 'Most popular article round'
     self.year, self.month = wiki.get_random_month()
     self.word = wiki.get_random_word()
@@ -113,12 +120,13 @@ class MostViewsRound(Round):
 
 class ImageRound(Round):
   def __init__(self):
+    super().__init__()
     self.title = 'The image round'
     
     image_url = None
     while not image_url:
       try:
-        self.image, image_url, self.article = wiki.get_random_image()
+        self.image, image_url, article = wiki.get_random_image()
       except wiki.NoImageError:
         pass
     
@@ -127,7 +135,7 @@ class ImageRound(Round):
     self.data = {
       'image': image_url,
       'answer': {
-        'article': self.article.title,
+        'article': article.title,
         'articles': self.articles,
         'scoreType': 'Results'
       }
@@ -155,6 +163,7 @@ class ImageRound(Round):
 
 class MostFrequentWordRound(Round):
   def __init__(self):
+    super().__init__()
     self.title = 'Highest word count round'
     self.article_title = ''
     self.question = 'Guess the most common word in the article for '

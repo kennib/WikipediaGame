@@ -2,6 +2,7 @@ import pytest
 
 import sys
 import os
+import json
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -22,6 +23,21 @@ def init_round(round=1, players=1):
     room.next_round()
 
   return room
+
+#
+# JSON encode/decode tests
+#
+
+def test_json_encode():
+  room = init_round()
+  json_string = json.dumps(room)
+
+  assert type(json_string) == str
+
+  data = json.loads(json_string)
+
+  assert set(data['players']) == set(room.players)
+  assert set(data['state']) == set(room.state)
 
 #
 # Answer submission tests
