@@ -16,17 +16,24 @@ def generate_room_code(exclude=[]):
 
   return room_code
 
-class Room():
+class Players(list):
+  def add(self, player):
+    if player.lower() not in map(str.lower, self):
+      self.append(player)
+
+class Room(dict):
   def __init__(self, room_code, round_time=60):
+    self.__dict__ = self
+
     self.code = room_code
-    self.players = set()
+    self.players = Players()
     self.state = 'waiting room'
 
     self.finish_time = None
     self.round_time = round_time
     self.round = None
 
-    self.rounds = ROUNDS
+    self.rounds = [round() for round in ROUNDS]
 
     self.final_results = {}
 
@@ -41,7 +48,7 @@ class Room():
     self.results = {}
     if self.round_number < len(self.rounds):
       self.round_number += 1
-      self.round = self.rounds[self.round_number - 1]()
+      self.round = self.rounds[self.round_number - 1]
       if hasattr(self.round, 'setup'):
         self.state = 'round setup'
         self.player_choice = {'player': random.choice(list(self.players)), 'options':  wiki.get_random_articles()}
