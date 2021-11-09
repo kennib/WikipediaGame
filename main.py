@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, send_from_directory, render_template, request, redirect, make_response
 from flask_socketio import SocketIO, emit, join_room
+
+import os
 
 import wiki
 from game import Room, generate_room_code
@@ -11,6 +13,19 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 rooms = {}
+
+
+favicon_path = os.path.join(app.root_path, 'static/favicon')
+@app.route('/android-chrome-512x512.png')
+@app.route('/android-chrome-192x192.png')
+@app.route('/favicon-16x16.png')
+@app.route('/favicon-32x32.png')
+@app.route('/apple-touch-icon.png')
+@app.route('/favicon.ico')
+def favicon():
+  favicon_file = request.path[1:]
+  return send_from_directory(favicon_path,
+    favicon_file, mimetype='image/x-icon')
 
 @app.route('/')
 def home():
