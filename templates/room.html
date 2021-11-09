@@ -117,7 +117,7 @@ var app = new Vue({
       }
     },
     enterName: function(player) {
-      document.cookie += 'player='+player+';'
+      document.cookie += ';player='+player+';'
 
       this.player = player
       this.state = 'waiting room'
