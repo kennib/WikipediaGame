@@ -41,7 +41,7 @@ def test_json_encode():
 
 def test_json_decode():
   room = init_round()
-  json_string = json.dumps(room)
+  json_string = room.to_JSON()
 
   assert type(json_string) == str
 

@@ -14,7 +14,7 @@ import rounds
 
 def test_json_encode():
   round = rounds.HighestWordCountRound()
-  json_string = json.dumps(round)
+  json_string = round.to_JSON()
 
   assert type(json_string) == str
 
