@@ -111,6 +111,7 @@ def send_answer(data):
   
   if room.round_complete():
     room.score_round()
+    db.save_room(room)
     emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
 @socketio.on('play again')
