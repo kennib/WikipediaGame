@@ -23,7 +23,10 @@ class Round(dict):
   @staticmethod
   def from_JSON(json_string):
     data = json.loads(json_string)
-    
+    return Round.from_dict(data)
+  
+  @staticmethod
+  def from_dict(data):
     round_class = getattr(sys.modules[__name__], data['round_type'])
     round = round_class()
 
