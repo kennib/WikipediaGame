@@ -4,7 +4,7 @@ import string
 from time import time
 import json
 
-from rounds import ROUNDS
+from rounds import Round, ROUNDS
 
 POINTS_PER_ROUND = 1000
 
@@ -28,7 +28,14 @@ class Room(dict):
     data = json.loads(json_string)
     room = Room(data['code'])
     for key in room:
-      room[key] = data[key]
+      if key == 'players':
+        room.players = Players(data['players'])
+      elif key == 'round':
+        room.round = Round.from_dict(data['round'])
+      elif key == 'rounds':
+        room.rounds = [Round.from_dict(round) for round in data['rounds']]
+      else:
+        room[key] = data[key]
     return room
 
   def __init__(self, room_code, round_time=60):

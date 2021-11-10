@@ -48,6 +48,9 @@ def test_json_decode():
   decoded_room = game.Room.from_JSON(json_string)
 
   assert room == decoded_room
+  assert type(decoded_room.round) == type(room.round)
+  assert type(decoded_room.rounds[0]) == type(room.rounds[0])
+  assert decoded_room.round == decoded_room.rounds[0]
 
 #
 # Answer submission tests
