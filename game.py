@@ -26,6 +26,10 @@ class Room(dict):
   @staticmethod
   def from_JSON(json_string):
     data = json.loads(json_string)
+    return Room.from_dict(data)
+
+  @staticmethod
+  def from_dict(data):
     room = Room(data['code'])
     for key in room:
       if key == 'players':
@@ -37,6 +41,9 @@ class Room(dict):
       else:
         room[key] = data[key]
     return room
+
+  def to_JSON(self, *args, **kwargs):
+    return json.dumps(self, *args, **kwargs)
 
   def __init__(self, room_code, round_time=60):
     self.__dict__ = self

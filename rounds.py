@@ -34,7 +34,10 @@ class Round(dict):
       round[key] = data[key]
     
     return round
-  
+
+  def to_JSON(self, *args, **kwargs):
+    return json.dumps(self, *args, **kwargs)
+
   def __init__(self):
     self.__dict__ = self
     self.round_type = self.__class__.__name__
