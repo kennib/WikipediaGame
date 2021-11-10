@@ -7,6 +7,11 @@
       }
     }
   },
+  "env": {
+    "DISABLE_POETRY_CREATE_RUNTIME_FILE": {
+      "value": 1
+    },
+  },
   "buildpacks": [
     { "url": "https://github.com/moneymeets/python-poetry-buildpack.git" },
     { "url": "heroku/python" }
