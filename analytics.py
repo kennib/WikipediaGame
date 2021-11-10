@@ -35,7 +35,7 @@ def get_stats():
   pipe = r.pipeline()
 
   pipe \
-    .get('live games') \
+    .hlen('room') \
     .get('games completed') \
     .get('games completed : players')
 
