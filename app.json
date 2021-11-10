@@ -1,0 +1,14 @@
+  {
+  "environments": {
+    "test": {
+      "scripts": {
+        "test-setup": "poetry install",
+        "test": "pytest --tap-stream"
+      }
+    }
+  },
+  "buildpacks": [
+    { "url": "heroku/python" },
+    { "url": "https://github.com/moneymeets/python-poetry-buildpack.git" }
+  ]
+}
