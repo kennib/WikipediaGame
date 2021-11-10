@@ -34,7 +34,7 @@ class Room(dict):
     for key in room:
       if key == 'players':
         room.players = Players(data['players'])
-      elif key == 'round':
+      elif key == 'round' and data['round']:
         room.round = Round.from_dict(data['round'])
       elif key == 'rounds':
         room.rounds = [Round.from_dict(round) for round in data['rounds']]
