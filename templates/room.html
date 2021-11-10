@@ -5,6 +5,7 @@
 
 {% block content %}
 <script src="/static/lib/mergeDeep.js"></script>
+<script src="/static/lib/js.cookie.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
@@ -70,15 +71,7 @@ var app = new Vue({
     let path = url.pathname.split('/')
 
     vm.room = path[path.length-1]
-
-    let cookies = document.cookie.split('; ')
-    let playerCookie = cookies.find(function(row) {
-      return row.startsWith('player=')
-    })
-
-    if (playerCookie) {
-      vm.player = playerCookie.split('=')[1]
-    }
+    vm.player = Cookies.get('player') 
     
     
     if (!vm.player) {
@@ -117,7 +110,7 @@ var app = new Vue({
       }
     },
     enterName: function(player) {
-      document.cookie += ';player='+player+';'
+      Cookies.set('player', player)
 
       this.player = player
       this.state = 'waiting room'
