@@ -13,25 +13,28 @@ if REDIS_URL:
 else:
   r = fakeredis.FakeStrictRedis()
 
+def delete_rooms():
+  r.delete('room')
+
 def save_rooms(rooms):
-  r.set('rooms', json.dumps(rooms))
+  for room in rooms.values():
+    save_room(room)
 
 def load_rooms():
-  rooms_json = r.get('rooms')
-  rooms_data = json.loads(rooms_json)
+  rooms_dict = r.hgetall('room')
 
-  rooms = {
-    room_code: Room.from_dict(room)
-    for room_code, room in rooms_data.items()
+  rooms_dict = {
+    room_code.decode(): Room.from_JSON(room) 
+    for room_code, room in rooms_dict.items()
   }
 
-  return rooms
+  return rooms_dict
 
 def save_room(room):
-  r.set(f'room: {room.code}', room.to_JSON())
+  r.hset('room', room.code, room.to_JSON())
 
 def load_room(room_code):
-  room_json = r.get(f'room: {room_code}')
+  room_json = r.hget('room', room_code)
   room = Room.from_JSON(room_json)
 
   return room
