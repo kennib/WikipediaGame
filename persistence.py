@@ -30,6 +30,9 @@ def load_rooms():
 
   return rooms_dict
 
+def delete_room(room):
+  r.hdel('room', room.code)
+
 def save_room(room):
   r.hset('room', room.code, room.to_JSON())
 
