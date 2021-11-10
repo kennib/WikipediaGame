@@ -133,6 +133,10 @@ def handle_player_choice(data):
   room.setup_round(article_title)
   emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
+def load_rooms():
+  rooms.update(db.load_rooms())
+
 if __name__ == '__main__':
   #console.game()
+  app.before_first_request(load_rooms)
   socketio.run(app, host='0.0.0.0')
