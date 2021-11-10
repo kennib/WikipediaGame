@@ -23,3 +23,13 @@ def test_json_encode():
   assert 'word' in data
   assert 'question' in data
   assert 'title' in data
+
+def test_json_decode():
+  round = rounds.HighestWordCountRound()
+  json_string = json.dumps(round)
+
+  assert type(json_string) == str
+
+  decoded_round = rounds.Round.from_JSON(json_string)
+
+  assert round == decoded_round

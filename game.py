@@ -2,6 +2,7 @@ import wiki
 import random
 import string
 from time import time
+import json
 
 from rounds import ROUNDS
 
@@ -22,6 +23,14 @@ class Players(list):
       self.append(player)
 
 class Room(dict):
+  @staticmethod
+  def from_JSON(json_string):
+    data = json.loads(json_string)
+    room = Room(data['code'])
+    for key in room:
+      room[key] = data[key]
+    return room
+
   def __init__(self, room_code, round_time=60):
     self.__dict__ = self
 
@@ -31,10 +40,12 @@ class Room(dict):
 
     self.finish_time = None
     self.round_time = round_time
+    self.round_number = 0
     self.round = None
 
     self.rounds = [round() for round in ROUNDS]
 
+    self.results = {}
     self.final_results = {}
 
   def add_player(self, player):

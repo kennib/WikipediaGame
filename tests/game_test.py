@@ -39,6 +39,16 @@ def test_json_encode():
   assert set(data['players']) == set(room.players)
   assert set(data['state']) == set(room.state)
 
+def test_json_decode():
+  room = init_round()
+  json_string = json.dumps(room)
+
+  assert type(json_string) == str
+
+  decoded_room = game.Room.from_JSON(json_string)
+
+  assert room == decoded_room
+
 #
 # Answer submission tests
 #
