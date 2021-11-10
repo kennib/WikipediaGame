@@ -12,6 +12,15 @@ class NoArticleError(Exception):
 class NoImageError(Exception):
   pass
 
+class Article(dict):
+  def __init__(self, article):
+    self.__dict__ = self
+    self.title = article.title
+    self.url = article.url
+    self.content = article.content
+    self.links = article.links
+    self.summary = article.summary
+
 def get_random_month():
   year = random.randint(2016, 2021)
   month = random.randint(1,12)
@@ -36,7 +45,7 @@ def get_article(article_title):
   search = wikipedia.search(article_title)
   if search:
     article = wikipedia.page(search[0], auto_suggest=False)
-    return article
+    return Article(article)
   else:
     raise NoArticleError(f'Could not find an article for {article_title}')
 
