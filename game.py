@@ -45,7 +45,7 @@ class Room(dict):
   def to_JSON(self, *args, **kwargs):
     return json.dumps(self, *args, **kwargs)
 
-  def __init__(self, room_code, round_time=60):
+  def __init__(self, room_code, round_time=60, rounds=ROUNDS):
     self.__dict__ = self
 
     self.code = room_code
@@ -57,7 +57,7 @@ class Room(dict):
     self.round_number = 0
     self.round = None
 
-    self.rounds = [round() for round in ROUNDS]
+    self.rounds = [round() for round in rounds]
 
     self.results = {}
     self.final_results = {}
