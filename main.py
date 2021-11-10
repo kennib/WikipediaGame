@@ -8,6 +8,7 @@ from game import Room, generate_room_code
 from rounds import InvalidAnswerError
 
 from analytics import record_game_start, record_game_completed, get_stats
+import persistence as db
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -76,18 +77,20 @@ def next_round(data):
   if data['state'] == room.state and room.state == 'waiting room' or data['round'] == room.round_number:
     if room.state == 'waiting room':
       record_game_start(len(room.players))
-    
+
     room.next_round()
     emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
     if room.state == 'final scores':
       record_game_completed(len(room.players))
+      db.delete_room(room)
 
     this_round = room.round
     socketio.sleep(room.round_time)
 
     if room.state == 'round' and room.round == this_round:
       room.score_round()
+      db.save_room(room)
       emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
 @socketio.on('send answer')
