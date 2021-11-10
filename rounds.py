@@ -1,4 +1,6 @@
+import json
 import wiki
+import sys
 
 STOPWORDS = open('data/stopwords.txt').read().splitlines()
 
@@ -18,8 +20,21 @@ class Score(dict):
     self.details = details
 
 class Round(dict):
+  @staticmethod
+  def from_JSON(json_string):
+    data = json.loads(json_string)
+    
+    round_class = getattr(sys.modules[__name__], data['round_type'])
+    round = round_class()
+
+    for key in round:
+      round[key] = data[key]
+    
+    return round
+  
   def __init__(self):
     self.__dict__ = self
+    self.round_type = self.__class__.__name__
 
     self.title = ''
     self.article = None
