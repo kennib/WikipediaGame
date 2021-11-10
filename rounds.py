@@ -5,7 +5,7 @@ STOPWORDS = open('data/stopwords.txt').read().splitlines()
 class InvalidAnswerError(Exception):
   pass
 
-class Score(object):
+class Score(dict):
   def __init__(self, article_title, raw_score, display_score=None, details=None):
     self.__dict__ = self
 
