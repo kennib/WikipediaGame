@@ -2,8 +2,10 @@ Vue.component('round-answer', {
   props: ['room', 'player', 'round', 'syncTime'],
   data() {
     return {
+      active: false,
       answer: '',
       answerState: 'need answer',
+      roundFinished: false,
     }
   },
   beforeCreate: function() {
@@ -36,7 +38,15 @@ Vue.component('round-answer', {
       let now = Math.floor(Date.now() / 1000)
       let duration = this.round.finishTime - now - this.syncTime
       return duration
-    }
+    },
+    roundFinish: function() {
+      this.roundFinished = true
+      if (this.active) {
+        this.submitAnswer()
+      } else {
+        this.$emit('inactive')
+      }
+    },
   },
   watch: {
     'round.submitted': function(submitted) {
@@ -51,7 +61,8 @@ Vue.component('round-answer', {
 
     <timer
       v-bind:duration="round.time"
-      v-bind:start-time="timeLeft()" />
+      v-bind:start-time="timeLeft()"
+      v-on:finish="roundFinish()" />
 
     <div v-if="round.disambiguation">
       Which {{ round.disambiguation.word }} did you mean?
@@ -73,10 +84,15 @@ Vue.component('round-answer', {
           <label for="answer">Answer</label>
           <input name="answer"
             v-model="answer"
+            v-on:keydown="active = true"
             v-on:keyup.enter="submitAnswer"
-            autocomplete="off"></input>
+            v-bind:disabled="roundFinished"
+            autocomplete="off"/>
         </p>
-        <button v-on:click="submitAnswer">Submit answer</button>
+        <button v-on:click="submitAnswer"
+          v-bind:disabled="roundFinished">
+            Submit answer
+        </button>
       </form>
     </div>
 

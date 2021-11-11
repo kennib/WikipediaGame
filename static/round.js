@@ -39,6 +39,7 @@ Vue.component('round', {
       v-bind:player="player"
       v-bind:round="round"
       v-bind:sync-time="syncTime"
+      v-on:inactive="$emit('inactive')"
      />
 
     <round-scores v-if="state == 'round scores'"

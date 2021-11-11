@@ -22,6 +22,11 @@ class Players(list):
     if player.lower() not in map(str.lower, self):
       self.append(player)
 
+  def remove(self, player):
+    index = list(map(str.lower, self)).index(player.lower())
+    if index != None:
+      del self[index]
+
 class Room(dict):
   @staticmethod
   def from_JSON(json_string):
@@ -65,6 +70,9 @@ class Room(dict):
   def add_player(self, player):
     self.players.add(player)
     self.final_results[player] = {'player': player, 'score': 0}
+
+  def remove_player(self, player):
+    self.players.remove(player)
 
   def next_round(self):
     if self.state == 'waiting room':

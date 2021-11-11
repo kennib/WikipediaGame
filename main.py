@@ -56,6 +56,11 @@ def join_a_room():
 def room(room_code):
   return render_template('room.html', room=room_code)
 
+@socketio.event
+def connect(data=None):
+  if data:
+    join(data)
+
 @socketio.on('join')
 def join(data):
   room_code = data['room']
@@ -68,6 +73,18 @@ def join(data):
   join_room(room_code)
   emit('new players', list(room.players), json=True, broadcast=True, room=room_code)
   emit('update state', room.current_state(player), json=True)
+
+
+@socketio.on('leave')
+def data(data):
+  room_code = data['room']
+  player = data['player']
+  
+  room = rooms.get(room_code, Room(room_code))
+  rooms[room_code] = room
+  room.remove_player(player)
+  
+  emit('new players', list(room.players), json=True, broadcast=True, room=room_code)
 
 @socketio.on('next round')
 def next_round(data):

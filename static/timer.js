@@ -1,9 +1,10 @@
 Vue.component('timer', {
   props: ['duration', 'startTime'],
   data() {
+    let time = this.startTime || this.duration
     return {
-      enabled: true,
-      time: this.startTime || this.duration,
+      enabled: time > 0,
+      time: time,
       start: new Date().valueOf()/1000 + (this.startTime || 0) - (this.duration || 0),
       end: new Date().valueOf()/1000 + (this.startTime || 0),
     }
@@ -11,23 +12,27 @@ Vue.component('timer', {
   methods: {
     timeFormatted: function() {
       return (this.time/this.duration*100)+'%'
-    }
-  },
-  watch: {
-    enabled(value) {
-      if (value) {
-        setTimeout(() => {
-          this.time = Math.floor(this.end - new Date().valueOf()/1000)
+    },
+    countdown: function() {
+      let vm = this
+      if (vm.time > 0 && vm.enabled) {
+        setTimeout(function() {
+          vm.time = Math.floor(vm.end - new Date().valueOf()/1000)
+          vm.$forceUpdate()
         }, 1000);
+      } else if (vm.time <= 0 && vm.enabled) {
+        vm.enabled = false
+        vm.$emit('finish')
       }
     },
+  },
+  watch: {
+    enabled: function() { 
+      this.countdown()
+    },
     time: {
-      handler(value) {
-        if (value > 0 && this.enabled) {
-          setTimeout(() => {
-            this.time = Math.floor(this.end - new Date().valueOf()/1000)
-          }, 1000);
-        }
+      handler: function() {
+        this.countdown()
       },
       immediate: true // This ensures the watcher is triggered upon creation
     },

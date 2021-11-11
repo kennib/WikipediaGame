@@ -27,6 +27,17 @@
     <span class="room" v-text="room"></span>
   </header>
 
+  <aside v-if="inactive" class="modal">
+    <div class="modal-content">
+      <p>Are you still there? Would you like to rejoin the game?</p>
+      <form v-on:submit.prevent>
+        <button v-on:click="rejoin()">
+          Rejoin
+        </button>
+      </form>
+    </div>
+  </aside>
+
   <main>
     <div v-if="state == 'loading'">
       Loading...
@@ -47,6 +58,7 @@
         v-bind:player="player"
         v-bind:round="round"
         v-bind:sync-time="syncTime"
+        v-on:inactive="disconnectPlayer()"
       />
     </div>
     <div v-if="state == 'final scores'">
@@ -109,6 +121,13 @@ var app = new Vue({
         })
       }
     },
+    rejoin: function() {
+      this.inactive = false
+      socket.connect({
+        player: this.player,
+        room: this.room,
+      })
+    },
     enterName: function(player) {
       Cookies.set('player', player)
 
@@ -119,7 +138,15 @@ var app = new Vue({
     },
     playAgain: function() {
       socket.emit('play again', { room: this.room })
-    }
+    },
+    disconnectPlayer: function() {
+      this.inactive = true
+      socket.emit('leave', {
+          player: vm.player,
+          room: vm.room,
+      })
+      socket.disconnect()
+    },
   },
   watch: {
     serverTime: function(serverTime) {
@@ -130,6 +157,7 @@ var app = new Vue({
   data: function() {
     return {
       serverTime: Math.floor(Date.now() / 1000),
+      inactive: false,
       players: [],
       round: {
         number: 0,
