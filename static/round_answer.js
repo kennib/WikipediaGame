@@ -13,6 +13,7 @@ Vue.component('round-answer', {
     socket.on('disambiguation', function(disambiguation) {
       vm.round.submitted = false
       console.log(disambiguation)
+      vm.answerState = 'need answer'
       vm.round.disambiguation = disambiguation
     })
     socket.on('invalid answer', function(invalidAnswer) {
@@ -30,9 +31,13 @@ Vue.component('round-answer', {
       }
     },
     chooseAnswer: function(option) {
-      this.disambiguation = undefined
+      this.round.disambiguation = undefined
       this.answer = option
       this.submitAnswer()
+    },
+    tryAgain: function() {
+      this.round.disambiguation = undefined
+      this.answer = ''
     },
     timeLeft: function() {
       let now = Math.floor(Date.now() / 1000)
@@ -64,22 +69,25 @@ Vue.component('round-answer', {
       v-bind:start-time="timeLeft()"
       v-on:finish="roundFinish()" />
 
-    <div v-if="round.disambiguation">
-      Which {{ round.disambiguation.word }} did you mean?
-      <ul>
-        <li v-for="option in round.disambiguation.options">
-          <a v-on:click="chooseAnswer(option)" href="javascript:undefined">
-            {{ option }}
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <div v-else-if="answerState == 'need answer'">
+    <div v-if="answerState == 'need answer'">
       <div v-if="round.invalidAnswer">
         {{ round.invalidAnswer }}
       </div>
-      <form v-on:submit.prevent>
+      <div v-if="round.disambiguation">
+        <p>Which <em>{{ round.disambiguation.word }}</em> did you mean?</p>
+        <ul>
+          <li v-for="option in round.disambiguation.options">
+            <a v-on:click="chooseAnswer(option)" href="javascript:undefined">
+              {{ option }}
+            </a>
+          </li>
+          <br/>
+          <button v-on:click="tryAgain()">
+            Try another word
+          </button>
+        </ul>
+      </div>
+      <form v-else v-on:submit.prevent>
         <p>
           <label for="answer">Answer</label>
           <input name="answer"
