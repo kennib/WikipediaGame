@@ -1,10 +1,13 @@
+from typing import List, Dict, TypedDict, Optional, Literal, Union, cast
+
 import wiki
 import random
 import string
 from time import time
 import json
 
-from rounds import Round, ROUNDS
+from rounds import Score, Round, ROUNDS
+from wiki import Article
 
 POINTS_PER_ROUND = 1000
 
@@ -16,6 +19,32 @@ def generate_room_code(exclude=[]):
     room_code = ''.join(letters)
 
   return room_code
+
+NoSubmission = TypedDict('NoSubmission', {
+  'answer': None,
+})
+
+Submission = TypedDict('Submission', {
+ 'answer': str,
+ 'article': Optional[Article],
+})
+
+ScoredSubmission = TypedDict('ScoredSubmission', {
+ 'answer': Optional[str],
+ 'article': Optional[Article],
+ 'results': Score,
+})
+
+RoundScoredSubmission = TypedDict('RoundScoredSubmission', {
+ 'player': str,
+ 'answer': Optional[str],
+ 'article': Optional[Article],
+ 'results': Score,
+ 'normalised_score': int,
+ 'running_score': int,
+})
+
+Result = Union[NoSubmission, Submission, ScoredSubmission, RoundScoredSubmission]
 
 class Players(list):
   def add(self, player):
@@ -64,7 +93,7 @@ class Room(dict):
 
     self.rounds = [round() for round in rounds]
 
-    self.results = {}
+    self.results : Dict[str, Result] = {}
     self.final_results = {}
 
   def add_player(self, player):
@@ -92,37 +121,16 @@ class Room(dict):
       self.state = 'final scores'
       
   def receive_answer(self, player, answer):
-    self.results[player] = {
-      'player': player,
-      'answer': answer,
-    }
+    self.results[player] = Submission(answer=answer, article=None)
 
     if answer:
       self.round.validate_answer(answer) # Will raise an exception if the answer is invalid
 
       score = self.round.score(answer)
-      
-      self.results[player] = {
-        'player': player,
-        'answer': answer,
-        'raw_score': score.raw_score,
-        'score': score.display_score or score.raw_score,
-        'details': score.details,
-      }
-      if score.article:
-        self.results[player]['article'] = {
-          'title': score.article.title,
-          'url': score.article.url,
-        }
-    else:
-      self.results[player] = {
-        'player': player,
-        'raw_score': 0,
-        'score': '-',
-      }
+      self.results[player]['results'] = score
 
   def round_complete(self):
-    submissions = [result for result in self.results.values() if result.get('raw_score') != None]
+    submissions = [submission for submission in self.results.values() if 'results' in submission]
     return len(submissions) == len(self.players)
 
   def waiting_for_players(self):
@@ -134,26 +142,50 @@ class Room(dict):
 
     for player in self.players:
       if player not in self.results:
-        self.receive_answer(player, None)
+        score = Score('No article', 0)
+        submission = RoundScoredSubmission(
+          player=player,
+          answer=None,
+          article=None,
+          results=score,
+          normalised_score=0,
+          running_score=0
+        )
+
+        self.results[player] = submission
 
     total_score = 0 
-    for result in self.results.values():
-      if result.get('raw_score'):
-        total_score += result['raw_score']
+    for submission in self.results.values():
+      if 'results' in submission and submission['results'].get('raw_score'):
+        total_score += submission['results']['raw_score']
 
     for player in self.players:
-      if total_score == 0:
-        self.results[player]['normalised_score'] = 0
-      elif self.results[player].get('raw_score'):
-        self.results[player]['normalised_score'] = round((self.results[player]['raw_score'] / total_score) * POINTS_PER_ROUND)
-      else:
-        self.results[player]['normalised_score'] = 0
-      self.final_results[player]['score'] += self.results[player]['normalised_score']
-      self.results[player]['running_score'] = self.final_results[player]['score']
+      submission : Result = self.results[player]
 
-  def round_results(self):
-    results = [self.results.get(player, {}) for player in self.players]
-    return sorted(results, key=lambda result: result.get('normalised_score', 0), reverse=True)
+      if total_score == 0:
+        submission['normalised_score'] = 0
+      elif 'results' in submission:
+        raw_score = submission['results'].get('raw_score', 0)
+        submission['normalised_score'] = round((raw_score / total_score) * POINTS_PER_ROUND)
+      else:
+        submission['normalised_score'] = 0
+
+      self.final_results[player]['score'] += self.results[player]['normalised_score']
+      submission['running_score'] = self.final_results[player]['score']
+
+  def round_results(self) -> List[RoundScoredSubmission]:
+    results = []
+    for player in self.players:
+      submission = self.results.get(player)
+
+      if submission and 'results' in submission:
+        result = cast(RoundScoredSubmission, submission)
+        result['player'] = player
+        results.append(result)
+
+    ranked_results = sorted(results, key=lambda result: result.get('normalised_score', 0), reverse=True)
+
+    return ranked_results
 
   def current_state(self, player=None):
     current_state = {

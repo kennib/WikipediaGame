@@ -20,4 +20,7 @@ python = "^3.8"
 wikipedia = "^1.4.0"
 fakeredis = "^1.6.1"
 redis = "^3.5.3"
+mypy = "^0.910"
+types-requests = "^2.26.0"
+runtime-type-checker = "^0.5.0"
 [tool.poetry.dev-dependencies]

@@ -1,4 +1,4 @@
-import wikipedia
+import wikipedia # type: ignore
 import random
 import requests
 import re
