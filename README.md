@@ -13,6 +13,12 @@ poetry install
 python3 main.py
 ```
 
+## How to type check
+
+```
+mypy game.py
+```
+
 ## How to test
 
 ```bash
