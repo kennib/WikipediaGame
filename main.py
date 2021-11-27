@@ -10,6 +10,8 @@ from rounds import InvalidAnswerError
 from analytics import record_game_start, record_game_completed, get_stats
 import persistence as db
 
+import logging
+
 app = Flask(__name__)
 socketio = SocketIO(app)
 
@@ -42,13 +44,20 @@ def join_a_room():
   room_code = request.args.get('room') or generate_room_code(exclude=rooms.keys())
   room_code = room_code.upper()
 
-  room = rooms.get(room_code, Room(room_code))
+  #import pdb; pdb.set_trace()
+  app.logger.info(f'Looking up or creating room {room_code}')
+  #room = rooms.get(room_code, Room(room_code))
+  room = Room(room_code)
+  app.logger.info(f'Created room {room_code}')
   rooms[room_code] = room
+  app.logger.info(f'Room {room_code} is ready')
 
   player = request.args.get('name')
 
   response = make_response(redirect(f'/room/{room_code}'))
   response.set_cookie('player', player)
+
+  app.logger.info(f'{player} joined {room_code}')
 
   return response
 
@@ -151,9 +160,16 @@ def handle_player_choice(data):
   emit('update state', room.current_state(), json=True, broadcast=True, room=room_code)
 
 def load_rooms():
+  print("loading rooms")
   rooms.update(db.load_rooms())
 
 if __name__ == '__main__':
   #console.game()
   app.before_first_request(load_rooms)
   socketio.run(app, host='0.0.0.0')
+  app.logger.info('Running directly')
+else:
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
+    app.logger.info('Running with gunicorn')

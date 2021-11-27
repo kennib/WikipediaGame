@@ -1,6 +1,7 @@
 import json
 import wiki
 import sys
+from flask import current_app as app
 
 STOPWORDS = open('data/stopwords.txt').read().splitlines()
 
@@ -62,6 +63,7 @@ class Round(dict):
 
 class HighestWordCountRound(Round):
   def __init__(self):
+    app.logger.info('Constructing HighestWordCountRound')
     super().__init__()
     self.title = 'Article word count round'
     self.word = wiki.get_random_word()
@@ -85,6 +87,7 @@ class HighestWordCountRound(Round):
 
 class MostCommonLinksRound(Round):
   def __init__(self):
+    app.logger.info('Constructing MostCommonLinksRound')
     super().__init__()
     self.title = 'Most common links round'
     self.article_title = ''
@@ -115,6 +118,7 @@ class MostCommonLinksRound(Round):
 
 class MostViewsRound(Round):
   def __init__(self):
+    app.logger.info('Constructing MostViewsRound')
     super().__init__()
     self.title = 'Most popular article round'
     self.year, self.month = wiki.get_random_month()
@@ -141,6 +145,7 @@ class MostViewsRound(Round):
 
 class ImageRound(Round):
   def __init__(self):
+    app.logger.info('Constructing ImageRound')
     super().__init__()
     self.title = 'The image round'
     
@@ -149,9 +154,12 @@ class ImageRound(Round):
       try:
         self.image, image_url, article = wiki.get_random_image()
       except wiki.NoImageError:
+        app.logger.info(f'Bad image. Trying again')
         pass
+    app.logger.info(f'Selected image url={image_url}')
     
     self.articles = wiki.get_pages_containing_image(self.image)
+    app.logger.info(f'Found {len(self.articles)} containing image')
     self.question = f'Find an article containing the following image'
     self.data = {
       'image': image_url,
@@ -184,6 +192,7 @@ class ImageRound(Round):
 
 class MostFrequentWordRound(Round):
   def __init__(self):
+    app.logger.info('Constructing MostFrequentWordRound')
     super().__init__()
     self.title = 'Highest word count round'
     self.article_title = ''

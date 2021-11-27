@@ -2,6 +2,7 @@ import wikipedia # type: ignore
 import random
 import requests
 import re
+from flask import current_app as app
 
 # Articles if the most popular articles API is not working
 PLACEHOLDER_ARTICLES =  ['Bernie Sanders', 'Pie', 'Donkey', 'Calculus', 'The Shining (Film)', 'The Beatles', 'Mahogony']
@@ -42,8 +43,10 @@ def summarise(article):
   return sentences[0] if sentences else ''
 
 def get_article(article_title):
+  app.logger.info(f'Searching for {article_title}')
   search = wikipedia.search(article_title)
   if search:
+    app.logger.info(f'Getting first returned article')
     article = wikipedia.page(search[0], auto_suggest=False)
     return Article(article)
   else:
@@ -61,12 +64,15 @@ def get_random_articles():
 def get_random_image():
   response = requests.get('https://en.wikipedia.org/w/api.php', params={'action': 'query', 'list':'mostviewed', 'pvimoffset': random.randint(0, 1000), 'pvlimit': 1, 'format': 'json'})
 
+  app.logger.info('Choosing most viewed article with image')
   most_viewed = response.json()['query']['mostviewed']
   if most_viewed:
     article_title = most_viewed[0]['title']
   else:
     article_title = random.choice(PLACEHOLDER_ARTICLES)
+  app.logger.info('Getting article with image')
   article = get_article(article_title)
+  app.logger.info('Got article with image')
 
   response = requests.get(f'https://en.wikipedia.org/w/api.php', {'action': 'query', 'generator': 'images', 'prop': 'imageinfo', 'titles': article.title, 'iiprop': 'url|dimensions', 'format': 'json'})
 
