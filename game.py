@@ -5,6 +5,7 @@ import random
 import string
 from time import time
 import json
+from flask import current_app as app
 
 from rounds import Score, Round, ROUNDS
 from wiki import Article
@@ -90,11 +91,14 @@ class Room(dict):
     self.round_time = round_time
     self.round_number = 0
     self.round = None
+    app.logger.info(f'Constructing rounds={rounds}')
 
     self.rounds = [round() for round in rounds]
+    app.logger.info('Done')
 
     self.results : Dict[str, Result] = {}
     self.final_results = {}
+
 
   def add_player(self, player):
     self.players.add(player)
