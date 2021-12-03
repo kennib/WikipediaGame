@@ -169,7 +169,7 @@ if __name__ == '__main__':
   socketio.run(app, host='0.0.0.0')
   app.logger.info('Running directly')
 else:
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
-    app.logger.info('Running with gunicorn')
+  gunicorn_logger = logging.getLogger('gunicorn.error')
+  app.logger.handlers = gunicorn_logger.handlers
+  app.logger.setLevel(gunicorn_logger.level)
+  app.logger.info('Running with gunicorn')
